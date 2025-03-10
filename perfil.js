@@ -8,3 +8,12 @@ document.getElementById("input-file").addEventListener("change", function(event)
         reader.readAsDataURL(file);
     }
 });
+
+
+document.getElementById("btnAbrirPopup").addEventListener("click", function() {
+    document.getElementById("popup").style.display = "flex";
+});
+
+document.getElementById("btnCerrarPopup").addEventListener("click", function() {
+    document.getElementById("popup").style.display = "none";
+});

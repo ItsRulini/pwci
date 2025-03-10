@@ -50,12 +50,20 @@ $usuario = $_SESSION['usuario'];
 
             <h2>Perfil de cliente</h2>
 
-            <form id="formPerfil" action="guardar_perfil.php" method="POST">
+            <form id="formPerfil" action="cambiosPerfil.php" method="POST">
                 <input type="email" id="email" name="email" placeholder="Correo" value="<?php echo htmlspecialchars($usuario->getEmail()); ?>" required>
                 <input type="text" id="usuario" name="usuario" placeholder="Usuario" value="<?php echo htmlspecialchars($usuario->getNombreUsuario()); ?>" required>
                 <input type="password" id="password" name="password" placeholder="Contraseña">
+                
+                <?php
+                $foto = "default.jpg";
+                if($usuario->getFotoAvatar() != null) {
+                    $foto = "imagenPerfil/" . $usuario->getFotoAvatar();
+                }
 
-                <img class="ImageLoaded" src="default.jpg" id="profile-image">
+                ?>
+
+                <img class="ImageLoaded" src="<?php echo $foto ?>" id="profile-image">
                 <label id="image" for="input-file">Elige una imagen</label>
                 <input type="file" name="avatar" accept="image/*" id="input-file">
             
@@ -66,16 +74,16 @@ $usuario = $_SESSION['usuario'];
                 <input type="date" name="nacimiento" id="nacimiento" value="<?php echo htmlspecialchars($usuario->getFechaNacimiento()); ?>" required>
             
                 <div class="privacidad">
-                 <h3>Privacidad del perfil</h3>
-                <div>
-                    <input type="radio" id="privado" name="privacidad" value="Privado" 
-                    <?php if ($usuario->getPrivacidad() == "Privado") echo 'checked'; ?>>
-                    <label for="privado">Privado</label>
+                    <h3>Privacidad del perfil</h3>
+                    <div>
+                        <input type="radio" id="privado" name="privacidad" value="Privado" 
+                        <?php if ($usuario->getPrivacidad() == "Privado") echo 'checked'; ?>>
+                        <label for="privado">Privado</label>
 
-                    <input type="radio" id="publico" name="privacidad" value="Público" 
-                    <?php if ($usuario->getPrivacidad() == "Publico") echo 'checked'; ?>>
-                    <label for="publico">Público</label>
-                </div>
+                        <input type="radio" id="publico" name="privacidad" value="Público" 
+                        <?php if ($usuario->getPrivacidad() == "Publico") echo 'checked'; ?>>
+                        <label for="publico">Público</label>
+                    </div>
                 </div>
 
                 <input type="submit" id="submitPerfil" value="Guardar cambios">
@@ -84,11 +92,16 @@ $usuario = $_SESSION['usuario'];
         </div>
 
         <div class="wishlists">
-            <h2>Mis Wishlists</h2>
+            <div class="infoListas">
+                <h2>Mis Wishlists</h2>
+                <i class="fas fa-plus" title="Agregar lista" id="btnAbrirPopup"></i>
+            </div>
+            
             <ul class="listas">
         
                 <li class="lista">
                     <span>Lista de Deseos: Tecnología</span>
+                    <i class="fas fa-ellipsis-v"></i>
                     <p>Productos electrónicos que me interesan</p>
                     <ol class="contenidoLista">
                         <li class="producto">
@@ -125,7 +138,31 @@ $usuario = $_SESSION['usuario'];
             </ul>
         </div>
         
+        <!-- Ventana pop-up -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <span class="close" id="btnCerrarPopup">&times;</span>
+                <h3>Crear nueva wishlist</h3>
+                <form id="formWishlist">
+                    <input type="text" id="nombreLista" name="nombreLista" placeholder="Nombre de la lista" required>
 
+                    <textarea id="descripcion" name="descripcion" placeholder="Descripcion de la lista"></textarea>
+
+                    <div class="privacidadLista">
+                        <h3>Privacidad: </h3>
+                        <section>
+                            <input id="privada" type="radio" name="listaPrivacidad" value="Privado">
+                            <label for="privada">Privada</label>
+
+                            <input id="publica" type="radio" name="listaPrivacidad" value="Público">
+                            <label for="publica">Pública</label>
+                        </section>
+                    </div>
+
+                    <button id="submitLista" type="submit">Crear Lista</button>
+                </form>
+            </div>
+        </div>
     </section>
 
     <script src="perfil.js"></script>

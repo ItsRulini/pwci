@@ -136,7 +136,7 @@ body {
 
 
 /* Estilo para los contenedores de privacidad y género */
-.privacidad {
+.privacidad, .privacidadLista {
     padding: 15px;
     border-radius: 8px;
     color: white;
@@ -146,14 +146,14 @@ body {
     align-items: center;
 }
 
-.privacidad h3 {
+.privacidad h3, .privacidadLista h3 {
     margin-bottom: 10px;
     font-size: 18px;
     color:whitesmoke;
 }
 
 /* Estilo para los botones de selección */
-.privacidad label {
+.privacidad label, .privacidadLista label {
     background: #333;
     color: #f3f3f3;
     padding: 10px 20px;
@@ -166,28 +166,28 @@ body {
 }
 
 /* Cambia de color al pasar el mouse */
-.privacidad label:hover {
+.privacidad label:hover, 
+.privacidadLista label:hover {
     background: #555;
 }
 
 /* Resalta el botón cuando está seleccionado */
-.privacidad input[type="radio"]:checked + label {
+.privacidad input[type="radio"]:checked + label, 
+.privacidadLista input[type="radio"]:checked + label{
     background: #ffcc00;
     color: black;
     border-color: #ffcc00;
 }
 
 /* Oculta los radios originales */
-.privacidad input[type="radio"] {
+.privacidad input[type="radio"], input[type="radio"],
+.privacidadLista input[type="radio"], input[type="radio"]{
     display: none;
 }
 
 
-
-
-
 /* Botón de guardar cambios */
-#submitPerfil {
+#submitPerfil, #submitLista {
     background-color: #333;
     color: white;
     border: none;
@@ -199,7 +199,7 @@ body {
     margin-top: 10px;
 }
 
-#submitPerfil:hover {
+#submitPerfil:hover, #submitLista:hover {
     background-color: #ffcc00;
     color: #333;
 }
@@ -213,6 +213,26 @@ body {
     color: white;
     margin-top: 20px;
 }
+
+
+.wishlists .infoListas{
+   display: flex;
+   justify-content: space-between;
+   padding: 10px;
+
+   .fas {
+    align-self: center;
+    padding: 5px; /* Tamaño normal */
+    transition: all 0.3s ease-in-out;
+   }
+}
+
+.fas:hover {
+    cursor: pointer;
+    background-color: #222;
+    border-radius: 15px;
+}
+
 
 /* Lista de wishlists */
 .listas {
@@ -234,6 +254,13 @@ body {
     font-size: 18px;
     font-weight: bold;
     color: #ffcc00;
+}
+
+.lista .fas{
+    width: min-content;
+    margin-left: 80%;
+    padding: 5px; /* Tamaño normal */
+    transition: all 0.3s ease-in-out;
 }
 
 .lista p {
@@ -287,4 +314,59 @@ body {
 .producto .info p {
     font-size: 14px;
     color: #ffcc00;
+}
+
+
+
+/* Estilos del popup */
+.popup {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+
+    background: #444;
+    color:whitesmoke;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    position: relative;
+
+}
+
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: white;
+}
+
+#formWishlist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #ffcc00;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
 }
