@@ -12,14 +12,14 @@
     <section id="registroSection">
         <div class="contenedorForm">
             <h3>Registro</h3>
-            <form id="formRegistro" action="backend/registroUsuario.php" method="post">
+            <form id="formRegistro" action="backend/registroUsuario.php" method="post" enctype="multipart/form-data">
                 <input type="email" id="email" placeholder="correo" name="email">
                 <input type="text" id="usuario" placeholder="usuario" name="usuario">
                 <input type="password" id="password" placeholder="contraseña" name="pass">
 
                 <img class="ImageLoaded" src="default.jpg" id="profile-image">
                 <label for="input-file">Eliga una imagen</label>
-                <input type="file"  accept="image/*" id="input-file" name="avatar">
+                <input type="file" accept="image/*" id="input-file" name="avatar">
 
                 <input type="text" id="nombres" placeholder="Nombres" name="nombres">
                 <input type="text" id="paterno" placeholder="Apellido paterno" name="paterno">

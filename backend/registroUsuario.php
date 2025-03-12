@@ -3,10 +3,11 @@ require 'conexion.php';
 require '../models/Usuario.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    
     $email = $_POST["email"];
     $usuario = $_POST["usuario"];
     $pass = $_POST["pass"];
-    $avatar = $_POST["avatar"];
+    //$avatar = $_POST["avatar"];
     $nombres = $_POST["nombres"];
     $paterno = $_POST["paterno"];
     $materno = $_POST["materno"];
@@ -18,6 +19,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die(json_encode(["success" => false, "message" => "Error de conexión"]));
     }
 
+    // Manejo de la escritura del archivo en la carpeta
+    $carpeta = "../imagenPerfil/";
+    $nombreArchivo = $usuario . basename($_FILES["avatar"]["name"]);
+    $ruta = $carpeta . $nombreArchivo;
+
+    if (!move_uploaded_file($_FILES["avatar"]["tmp_name"],$ruta)) {
+        echo $ruta;
+        die(json_encode(["success" => false, "message" => "Error al subir la imagen."]));
+    }
+
+    $avatar = $nombreArchivo;
     // Crear un nuevo usuario
     $nuevoUsuario = new Usuario();
     $nuevoUsuario->setNombreUsuario($usuario);

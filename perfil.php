@@ -50,7 +50,7 @@ $usuario = $_SESSION['usuario'];
 
             <h2>Perfil de cliente</h2>
 
-            <form id="formPerfil" action="cambiosPerfil.php" method="POST">
+            <form id="formPerfil" action="cambiosPerfil.php" method="POST" enctype="multipart/form-data">
                 <input type="email" id="email" name="email" placeholder="Correo" value="<?php echo htmlspecialchars($usuario->getEmail()); ?>" required>
                 <input type="text" id="usuario" name="usuario" placeholder="Usuario" value="<?php echo htmlspecialchars($usuario->getNombreUsuario()); ?>" required>
                 <input type="password" id="password" name="password" placeholder="Contraseña">
