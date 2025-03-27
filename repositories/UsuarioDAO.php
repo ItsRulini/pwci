@@ -102,7 +102,6 @@ class UsuarioDAO
 
         } catch (mysqli_sql_exception $e) {
             error_log("Error en loginUsuario: " . $e->getMessage()); // Loguear el error
-            $userData = null;
         }
 
         return false;

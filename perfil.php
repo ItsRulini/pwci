@@ -53,12 +53,12 @@ $usuario = $_SESSION['usuario'];
             <form id="formPerfil" action="cambiosPerfil.php" method="POST" enctype="multipart/form-data">
                 <input type="email" id="email" name="email" placeholder="Correo" value="<?php echo htmlspecialchars($usuario->getEmail()); ?>" required>
                 <input type="text" id="usuario" name="usuario" placeholder="Usuario" value="<?php echo htmlspecialchars($usuario->getNombreUsuario()); ?>" required>
-                <input type="password" id="password" name="password" placeholder="Contraseña">
+                <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
                 
                 <?php
                 $foto = "default.jpg";
                 if($usuario->getFotoAvatar() != null) {
-                    $foto = "imagenPerfil/" . $usuario->getFotoAvatar();
+                    $foto = "multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
                 }
 
                 ?>

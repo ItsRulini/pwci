@@ -1,0 +1,330 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos generales */
+body {
+    background-color: #f3f3f3;
+    padding: 20px;
+}
+
+.logo-link {
+    text-decoration: none; /* Quita el subrayado */
+    color: inherit; /* Mantiene el color del texto */
+}
+
+.logo-link h1:hover {
+    color: #ffcc00; /* Cambia de color al pasar el mouse (opcional) */
+}
+
+/* Contenedor del buscador */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    padding: 10px 35px 10px 15px;
+    border-radius: 20px;
+    border: 2px solid #ffcc00;
+    outline: none;
+    font-size: 16px;
+    width: 700px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 15px 30px;
+    border-radius: 10px;
+}
+
+.logo {
+    color: white;
+    font-size: 24px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-links li a:hover {
+    color: #ffcc00;
+}
+
+
+/* Estilos para el main */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Estilos para las categorías */
+.categorias {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 columns per row */
+    gap: 10px;
+    padding: 10px;
+    list-style: none; /* Removes list bullets */
+    margin-bottom: 20px;
+}
+
+.categoria {
+    background: #ffcc00;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+}
+
+.producto {
+    background-color: #333;
+    width: 75%;
+    color: whitesmoke;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Botón de opciones (tres puntos) */
+.producto .fa-ellipsis-v {
+    position: absolute;
+    top: 545px;
+    right: 250px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #ffff;
+    transition: color 0.3s;
+}
+
+.producto .fa-ellipsis-v:hover {
+    color: #ffcc00;
+}
+
+/* Carrusel multimedia estilo Amazon */
+.multimedia {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #222;
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.multimedia img,
+.multimedia video {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.multimedia img:hover,
+.multimedia video:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos para las categorías */
+.categorias {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    list-style: none;
+    justify-content: center;
+}
+
+.categoria {
+    background: #ffcc00;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.categoria:hover {
+    background: #e6b800;
+}
+
+/* Info del producto */
+.producto .info {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.producto .info > * {
+    margin: 5px 0;
+}
+
+/* Botón Añadir al carrito */
+.producto button {
+    background-color: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.producto button:hover {
+    background-color: #e6b800;
+}
+
+/* Sección de calificación */
+.calificacion {
+    background-color: #333;
+    border-radius: 10px;
+    color: whitesmoke;
+    height: 150px;
+    width: 75%;
+    text-align: center;
+    border-top: 2px solid #ffcc00;
+}
+
+.calificacion h2 {
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+.estrellas {
+    color: #ffcc00;
+    font-size: 24px;
+}
+
+
+/* Sección de comentarios */
+.comentarios {
+    width: 100%;
+    background-color: #444;
+    padding: 20px;
+    color: whitesmoke;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+}
+
+.comentarios h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.comentarios ol {
+    list-style: none;
+}
+
+.comentario {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.1);
+}
+
+.comentario img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comentario .info {
+    color: #ffffff;
+}
+
+.comentario h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.comentario p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+
+/* Popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.cerrar-popup {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #ffcc00;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-bar {
+        width: 100%;
+    }
+}

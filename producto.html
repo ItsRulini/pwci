@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Producto</title>
+    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="producto.css">
+    </head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="main.html" class="logo-link">
+            <h1 class="logo">Papu Tienda</h1>
+        </a>
+        
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Buscar productos...">
+            <span class="search-icon"><i class="fas fa-search"></i></span>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="social.html">Social</a></li>
+            <li><a href="perfil.php">Perfil</a></li>
+            <li><a href="chat.html">Chat</a></li>
+            <li>
+                <a href="carrito.html">
+                <i class="fas fa-shopping-cart" style="color: #ffcc00; font-size: 20px;"></i>
+                </a>
+            </li>
+            <li><a href="index.php">Cerrar sesión</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="producto">
+            <!--Categorias a las que pertenece el producto-->
+            <ul class="categorias">
+                <li class="categoria">Categoria 1</li>
+                <li class="categoria">Categoria 2</li>
+                <li class="categoria">Categoria 3</li>
+                <li class="categoria">Categoria 4</li>
+                <li class="categoria">Categoria 5</li>
+                <li class="categoria">Categoria 6</li>
+            </ul>
+
+            <!--Info general del producto-->
+            
+            <div class="multimedia">
+                <img src="multimedia/default/default.jpg" alt="Producto 1">
+                <img src="multimedia/default/default.jpg" alt="Producto 1">
+                <img src="multimedia/default/default.jpg" alt="Producto 1">
+                
+                <video controls>
+                    <source src="multimedia/default/video.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="info">
+                <i class="fas fa-ellipsis-v"></i> <!--Icono para opcion de agregar a una wishlist-->
+                <h2>Nombre del producto</h2>
+                <p>$150 MXN</p>
+                <p>Descripción del producto</p>
+                <button id="ola">Añadir al carrito</button>
+            </div>
+        </section>
+
+        <section class="calificacion">
+            <h2>Calificación</h2>
+            <div class="estrellas">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+        </section>
+    </main>
+
+    <section class="comentarios">
+        <h2>Comentarios</h2>
+        <ol>
+            <li class="comentario">
+                <img src="default.jpg" alt="Usuario 1">
+                <div class="info">
+                    <h3>Usuario 1</h3>
+                    <p>Comentario 1</p>
+                </div>
+            </li>
+            <li class="comentario">
+                <img src="default.jpg" alt="Usuario 2">
+                <div class="info">
+                    <h3>Usuario 2</h3>
+                    <p>Comentario 2</p>
+                </div>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Ventana emergente -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p>¿Deseas agregar este producto a tu lista de deseos?</p>
+
+            <ul class="listas">
+                <li class="lista">
+                    Nombre de la lista
+                    <input type="checkbox">
+                </li>
+                
+            </ul>
+
+            <button class="cerrar-popup">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="producto.js"></script>
+    
+</body>
+</html>
