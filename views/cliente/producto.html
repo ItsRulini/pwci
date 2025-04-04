@@ -6,6 +6,7 @@
         <title>Producto</title>
     
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="producto.css">
     </head>
 <body>
@@ -52,7 +53,7 @@
                 <img src="multimedia/default/default.jpg" alt="Producto 1">
                 <img src="multimedia/default/default.jpg" alt="Producto 1">
                 <img src="multimedia/default/default.jpg" alt="Producto 1">
-                
+
                 <video controls>
                     <source src="multimedia/default/video.mp4" type="video/mp4">
                 </video>
@@ -101,7 +102,8 @@
     <!-- Ventana emergente -->
     <div class="popup" id="popup">
         <div class="popup-content">
-            <p>¿Deseas agregar este producto a tu lista de deseos?</p>
+            <span class="close" id="btnCerrarPopup">&times;</span>
+            <p>Agregar producto a wishlist</p>
 
             <ul class="listas">
                 <li class="lista">
@@ -111,7 +113,7 @@
                 
             </ul>
 
-            <button class="cerrar-popup">Cerrar</button>
+            <button class="agregar">Agregar</button>
         </div>
     </div>
 

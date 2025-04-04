@@ -17,8 +17,10 @@ $usuario = $_SESSION['usuario'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
 
-    <link rel="stylesheet" href="perfil.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <link rel="stylesheet" href="perfil.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -56,9 +58,9 @@ $usuario = $_SESSION['usuario'];
                 <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
                 
                 <?php
-                $foto = "default.jpg";
+                $foto = "../multimedia/default/default.jpg";
                 if($usuario->getFotoAvatar() != null) {
-                    $foto = "multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
+                    $foto = "../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
                 }
 
                 ?>

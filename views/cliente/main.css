@@ -39,6 +39,7 @@ body {
 
 .search-icon {
     position: absolute;
+    /* transform: translateY(-50%); */
     right: 15px;
     font-size: 18px;
     color: #333;

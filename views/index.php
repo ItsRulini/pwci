@@ -18,7 +18,7 @@
 <body>
     <section>
         <h3>Iniciar sesión</h3>
-        <form id="loginForm" action="controllers/login.php" method="post">
+        <form id="loginForm" action="../controllers/login.php" method="post">
             <input type="text" placeholder="Usuario" name="usuario" required>
             <input type="password" placeholder="Contraseña" name="pass" required>
 

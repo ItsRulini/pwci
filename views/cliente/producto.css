@@ -118,7 +118,7 @@ main {
 /* Botón de opciones (tres puntos) */
 .producto .fa-ellipsis-v {
     position: absolute;
-    top: 545px;
+    top: 555px;
     right: 250px;
     cursor: pointer;
     font-size: 20px;
@@ -281,33 +281,100 @@ main {
 }
 
 
-/* Popup */
+/* Estilos generales del popup */
 .popup {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    display: flex;
     justify-content: center;
     align-items: center;
+    visibility: hidden; /* Inicialmente oculto */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
+/* Contenedor del contenido del popup */
 .popup-content {
-    background-color: #333;
+    background: #333;
+    color: whitesmoke;
     padding: 20px;
     border-radius: 10px;
+    width: 350px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.cerrar-popup {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #ffcc00;
-    border: none;
+/* Efecto de entrada */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Botón de cerrar */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
     cursor: pointer;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #d00;
+}
+
+/* Estilos de la lista */
+.listas {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 10px;
+    margin: 5px 0;
     border-radius: 5px;
+}
+
+/* Botón de confirmar */
+.agregar {
+    background: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background 0.3s;
+}
+
+.agregar:hover {
+    background: #e6b800;
+}
+
+/* Clase para mostrar el popup */
+.popup.mostrar {
+    visibility: visible;
+    opacity: 1;
 }
 
 
