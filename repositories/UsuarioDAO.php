@@ -42,7 +42,6 @@ class UsuarioDAO
             }
             $stmt->close();
 
-
         } catch (mysqli_sql_exception $e) {
             error_log("Error en loginUsuario: " . $e->getMessage()); // Loguear el error
             $userData = null;
@@ -106,6 +105,40 @@ class UsuarioDAO
 
         return false;
     }
+
+    public function getUsuariosRegistrados()
+    {
+        $usuarios = array();
+        try {
+            // Llamada al procedimiento almacenado
+            $sql = "CALL spGetUsuarios()";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+
+            if ($resultado->num_rows > 0) {
+                while ($fila = $resultado->fetch_assoc()) {
+                    $usuario = new Usuario();
+                    $usuario->setIdUsuario($fila["idUsuario"]);
+                    $usuario->setNombreUsuario($fila["nombreUsuario"]);
+                    $usuario->setEmail($fila["email"]);
+                    $usuario->setRol($fila["rol"]);
+                    $usuario->setFechaRegistro($fila["fechaRegistro"]);
+                    array_push($usuarios, $usuario);
+                }
+            } else {
+                return null;
+            }
+            $stmt->close();
+
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error en getUsuariosRegistrados: " . $e->getMessage()); // Loguear el error
+            return null;
+        }
+
+        return $usuarios;
+    }
+
 }
 
 

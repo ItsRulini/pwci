@@ -23,11 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Switch para redirigir según el rol del usuario
         switch ($userData->getRol()) {
             case 'SuperAdmin':
-                // Redirigir a la página de administración
-                header("Location: ../views/superAdministrador/main.html");
+
+                $_SESSION['usuarios'] = $usuarioDAO->getUsuariosRegistrados(); // Guardar en sesión
+
+                $conn->close(); // Cerrar la conexión a la base de datos
+                // Redirigir a la página del superadministrador
+                header("Location: ../views/superAdministrador/main.php");
                 break;
             case 'Admin':
-                // Redirigir a la página de administración
+                // Redirigir a la página del administrador
                 header("Location: ../views/administrador/main.html");
                 break;
             case 'Vendedor':

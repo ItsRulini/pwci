@@ -25,7 +25,7 @@ $usuario = $_SESSION['usuario'];
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="main.html" class="logo-link">
+        <a href="main.php" class="logo-link">
             <h1 class="logo">Super Administrador</h1>
         </a>
 

@@ -1,5 +1,19 @@
+<?php
+    require_once '../../models/Usuario.php';
+
+    session_start();
+    if (!isset($_SESSION['usuario'])) {
+        header("Location: ../index.php"); // Redirigir al login si no hay sesión
+        exit();
+    }
+    
+    $usuario = $_SESSION['usuario'];
+    $usuarios = $_SESSION['usuarios']; // Obtener la lista de usuarios desde la sesión
+?>
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +25,7 @@
 <body>
 
     <nav class="navbar">
-        <a href="main.html" class="logo-link">
+        <a href="main.php" class="logo-link">
             <h1 class="logo">Super Administrador</h1>
         </a>
 
@@ -39,27 +53,16 @@
                 </thead>
                 <tbody id="usuarios-list">
                     
-                    <tr>
-                        <td>1</td>
-                        <td>Juan Perez</td>
-                        <td>juan.perez@example.com</td>
-                        <td>Administrador</td>
-                        <td>2000-02-02</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Maria Lopez</td>
-                        <td>maria.lopez@example.com</td>
-                        <td>Vendedor</td>
-                        <td>2020-05-12</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Carlos Gomez</td>
-                        <td>carlos.gomez@example.com</td>
-                        <td>Comprador</td>
-                        <td>2022-11-19</td>
-                    </tr>
+                    <!-- Aquí se llenarán los datos de los usuarios desde el servidor -->
+                    <?php foreach ($usuarios as $item): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($item->getIdUsuario()); ?></td>
+                            <td><?php echo htmlspecialchars($item->getNombreUsuario()); ?></td>
+                            <td><?php echo htmlspecialchars($item->getEmail()); ?></td>
+                            <td><?php echo htmlspecialchars($item->getRol()); ?></td>
+                            <td><?php echo htmlspecialchars($item->getFechaRegistro()); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                     
                 </tbody>
             </table>

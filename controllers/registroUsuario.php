@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Manejo de la escritura del archivo en la carpeta
-    $carpeta = "../imagenPerfil/";
+    $carpeta = "../multimedia/imagenPerfil/";
     $nombreArchivo = $usuario . basename($_FILES["avatar"]["name"]);
     $ruta = $carpeta . $nombreArchivo;
 
