@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die(json_encode(["success" => false, "message" => "Error al subir la imagen."]));
         }
 
-        header("Location: ../index.php");
+        header("Location: ../views/index.php");
         exit();
     }
 }

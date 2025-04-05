@@ -1,9 +1,9 @@
 <?php
-require 'models/Usuario.php';
+require '../../models/Usuario.php';
 
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: index.php"); // Redirigir al login si no hay sesión
+    header("Location: ../index.php"); // Redirigir al login si no hay sesión
     exit();
 }
 
@@ -43,7 +43,7 @@ $usuario = $_SESSION['usuario'];
                 <i class="fas fa-shopping-cart" style="color: #ffcc00; font-size: 20px;"></i>
                 </a>
             </li>
-            <li><a href="index.php">Cerrar sesión</a></li>
+            <li><a href="../index.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 
@@ -58,9 +58,9 @@ $usuario = $_SESSION['usuario'];
                 <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
                 
                 <?php
-                $foto = "../multimedia/default/default.jpg";
+                $foto = "../../multimedia/default/default.jpg";
                 if($usuario->getFotoAvatar() != null) {
-                    $foto = "../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
+                    $foto = "../../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
                 }
 
                 ?>
@@ -107,14 +107,14 @@ $usuario = $_SESSION['usuario'];
                     <p>Productos electrónicos que me interesan</p>
                     <ol class="contenidoLista">
                         <li class="producto">
-                            <img src="default.jpg" alt="Producto 1">
+                            <img src="../../multimedia/default/default.jpg" alt="Producto 1">
                             <div class="info">
                                 <span>Auriculares Bluetooth</span>
                                 <p>$1500 MXN</p>
                             </div>
                         </li>
                         <li class="producto">
-                            <img src="default.jpg" alt="Producto 2">
+                            <img src="../../multimedia/default/default.jpg" alt="Producto 2">
                             <div class="info">
                                 <span>Teclado Mecánico</span>
                                 <p>$1200 MXN</p>
@@ -128,7 +128,7 @@ $usuario = $_SESSION['usuario'];
                     <p>Artículos de moda que quiero comprar</p>
                     <ol class="contenidoLista">
                         <li class="producto">
-                            <img src="default.jpg" alt="Producto 3">
+                            <img src="../../multimedia/default/default.jpg" alt="Producto 3">
                             <div class="info">
                                 <span>Sudadera Negra</span>
                                 <p>$850 MXN</p>

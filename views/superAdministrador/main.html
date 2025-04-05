@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="main.html" class="logo-link">
+            <h1 class="logo">Super Administrador</h1>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="perfil.php">Perfil</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="../index.php">Cerrar sesión</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+
+        <section class="usuarios">
+            <h2>Usuarios en el sistema</h2>
+
+            <table class="usuarios-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre de usuario</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Fecha de registro</th>
+                    </tr>
+                </thead>
+                <tbody id="usuarios-list">
+                    
+                    <tr>
+                        <td>1</td>
+                        <td>Juan Perez</td>
+                        <td>juan.perez@example.com</td>
+                        <td>Administrador</td>
+                        <td>2000-02-02</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Maria Lopez</td>
+                        <td>maria.lopez@example.com</td>
+                        <td>Vendedor</td>
+                        <td>2020-05-12</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Carlos Gomez</td>
+                        <td>carlos.gomez@example.com</td>
+                        <td>Comprador</td>
+                        <td>2022-11-19</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
