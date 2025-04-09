@@ -1,0 +1,147 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos generales */
+body {
+    background-color: #f3f3f3;
+    padding: 20px;
+}
+
+.logo-link {
+    text-decoration: none; /* Quita el subrayado */
+    color: inherit; /* Mantiene el color del texto */
+}
+
+.logo-link h1:hover {
+    color: #ffcc00; /* Cambia de color al pasar el mouse (opcional) */
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 15px 30px;
+    border-radius: 10px;
+}
+
+.logo {
+    color: white;
+    font-size: 24px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-links li a:hover {
+    color: #ffcc00;
+}
+
+
+/* Contenedor principal del perfil */
+.infoGeneral {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #444;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Título del perfil */
+.infoGeneral h2 {
+    margin-bottom: 20px;
+    color: whitesmoke;
+}
+
+/* Campos del formulario */
+.infoGeneral input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #ffcc00;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* Imagen de perfil */
+.ImageLoaded {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: 10px auto;
+    border-radius: 50%;
+    border: 3px solid #ffcc00;
+    object-fit: cover;
+}
+
+/* Botón de imagen */
+.infoGeneral #image {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+    background-color: #ffcc00;
+    color: #333;
+    cursor: pointer;
+    width: fit-content;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Ocultar input de archivo */
+#input-file {
+    display: none;
+}
+
+/* Botón de guardar cambios */
+#submitPerfil {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+#submitPerfil:hover {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-bar {
+        width: 100%;
+    }
+}

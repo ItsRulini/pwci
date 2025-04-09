@@ -1,11 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
     <title>Dashboard</title>
 </head>
 <body>
-    <h1>Vendedor</h1>
+    <nav class="navbar">
+        <a href="main.html" class="logo-link">
+            <h1 class="logo">Papu Tienda</h1>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="categorias.html">Categorias</a></li>
+            <li><a href="perfil.php">Perfil</a></li>
+            <li><a href="chat.html">Chat</a></li>
+            <li><a href="ventas.html">Ventas</a></li>
+            <li><a href="../index.php">Cerrar sesión</a></li>
+        </ul>
+    </nav>
+
+    <section id="dashboardSection">
+        <div class="contenedorForm">
+            <h2>Publicar producto</h2>
+            <form id="formDashboard" action="" method="post" enctype="multipart/form-data">
+                <input type="text" id="producto" placeholder="Nombre del producto" name="producto" required>
+                <textarea id="descripcion" name="descripcion" placeholder="Descripción del producto" required></textarea>
+
+                <label id="image" for="input-file">Selecciona al menos 3 imágenes</label>
+                <input type="file" accept="image/*" id="input-file" name="imagenes[]" multiple required>
+
+                <label id="video-label" for="input-video">Selecciona al menos 1 video</label>
+                <input type="file" accept="video/*" id="input-video" name="video" required>
+
+                <select id="categoria" name="categoria[]" multiple required>
+                    <option value="ropa">Ropa</option>
+                    <option value="tecnologia">Tecnología</option>
+                    <option value="hogar">Hogar</option>
+                    <option value="juguetes">Juguetes</option>
+                    <option value="otros">Otros</option>
+                </select>
+
+                <div class="radio-group">
+                    <label><input type="radio" name="tipo" value="venta" required> Venta</label>
+                    <label><input type="radio" name="tipo" value="cotizacion"> Cotización</label>
+                </div>
+
+                <input type="number" id="precio" name="precio" placeholder="Precio" style="display:none;">
+                <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad disponible" style="display:none;">
+                <p id="sinStock" style="display: none; color: red;">⚠ No hay disponibilidad del producto.</p>
+
+                <button type="submit">Registrar Producto</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="main.js"></script>
 </body>
 </html>
