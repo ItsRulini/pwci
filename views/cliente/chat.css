@@ -47,6 +47,9 @@ body {
 
 /* Navbar */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -81,7 +84,7 @@ body {
 .chat-layout {
     display: flex;
     height: calc(100vh - 90px);
-    margin-top: 80px;
+    margin-top: 30px;
     padding: 0 10px 10px;
 }
 

@@ -47,6 +47,9 @@ body {
 
 /* Navbar */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -79,7 +82,7 @@ body {
 /* Contenedor principal del perfil */
 .infoGeneral {
     max-width: 500px;
-    margin: 20px auto;
+    margin: 30px auto;
     padding: 20px;
     background-color: #444;
     border-radius: 20px;
@@ -360,8 +363,8 @@ body {
     margin-top: 5px;
 }
 
-
-input, textarea {
+#formWishlist input, 
+#formWishlist textarea {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
@@ -388,6 +391,9 @@ input, textarea {
         width: 100%;
     }
 
+    .lista .fas {
+        margin-left: 30%;
+    }
     
     
 }

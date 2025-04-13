@@ -47,6 +47,9 @@ body {
 
 /* Navbar */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -143,5 +146,12 @@ body {
     
     .search-bar {
         width: 100%;
+    }
+
+    .perfiles-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .perfil {
+        padding: 10px;
     }
 }

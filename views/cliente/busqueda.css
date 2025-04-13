@@ -47,6 +47,9 @@ body {
 
 /* Navbar */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -232,5 +235,15 @@ body {
     
     .search-bar {
         width: 100%;
+    }
+    
+    .contenedor {
+        flex-direction: column;
+        align-items: center; /* Centra los elementos en pantallas pequeñas */
+        gap: 0; /* Elimina el espacio entre la barra lateral y los resultados */
+    }
+
+    .filtros {
+        width: 100%; /* Ancho completo para la barra de filtros en pantallas pequeñas */
     }
 }

@@ -48,6 +48,9 @@ body {
 
 /* Navbar */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -184,9 +187,18 @@ button:hover {
         align-items: center;
     }
 
-    #Populares, #Recientes {
+    #Populares, #Recientes, #ParaCotizar {
         width: 90%;
         margin-bottom: 20px;
     }
     
+    #ListaPopulares, #ListaRecientes, #ListaCotizacion {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .producto {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+    }
 }
