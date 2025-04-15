@@ -216,9 +216,21 @@ label[for="input-file"]:hover {
     display: none;
 }
 
+
 /* Responsive */
-@media (max-width: 400px) {
-    .contenedorForm {
-        width: 90%;
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
     }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-bar {
+        width: 100%;
+    }
+    
 }

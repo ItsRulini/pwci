@@ -95,3 +95,29 @@ body {
 .usuarios-table td {
     color: #333;
 }
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-bar {
+        width: 100%;
+    }
+
+    .usuarios-table {
+        font-size: 10px;
+    }
+
+    .usuarios-table th, .usuarios-table td {
+        padding: 8px 10px;
+    }
+}
