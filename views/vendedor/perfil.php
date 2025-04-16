@@ -31,7 +31,6 @@ $usuario = $_SESSION['usuario'];
         </a>
 
         <ul class="nav-links">
-            <li><a href="categorias.html">Categorias</a></li>
             <li><a href="perfil.php">Perfil</a></li>
             <li><a href="chat.html">Chat</a></li>
             <li><a href="ventas.html">Ventas</a></li>

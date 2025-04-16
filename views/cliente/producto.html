@@ -6,7 +6,6 @@
         <title>Producto</title>
     
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
         <link rel="stylesheet" href="../style.css">
         <link rel="stylesheet" href="producto.css">
@@ -26,6 +25,7 @@
 
         <ul class="nav-links">
             <li><a href="social.html">Social</a></li>
+            <li><a href="#">Compras</a></li>
             <li><a href="perfil.php">Perfil</a></li>
             <li><a href="chat.html">Chat</a></li>
             <li>
@@ -33,7 +33,7 @@
                 <i class="fas fa-shopping-cart" style="color: #ffcc00; font-size: 20px;"></i>
                 </a>
             </li>
-            <li><a href="index.php">Cerrar sesión</a></li>
+            <li><a href="../index.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 
@@ -52,12 +52,12 @@
             <!--Info general del producto-->
             
             <div class="multimedia">
-                <img src="multimedia/default/default.jpg" alt="Producto 1">
-                <img src="multimedia/default/default.jpg" alt="Producto 1">
-                <img src="multimedia/default/default.jpg" alt="Producto 1">
+                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
+                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
+                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
 
                 <video controls>
-                    <source src="multimedia/default/video.mp4" type="video/mp4">
+                    <source src="../../multimedia/default/video.mp4" type="video/mp4">
                 </video>
             </div>
 
@@ -72,34 +72,37 @@
 
         <section class="calificacion">
             <h2>Calificación</h2>
-            <div class="estrellas">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
+            <div class="estrellas" id="estrellas">
+                <i class="fas fa-star" data-index="1"></i>
+                <i class="fas fa-star" data-index="2"></i>
+                <i class="fas fa-star" data-index="3"></i>
+                <i class="fas fa-star" data-index="4"></i>
+                <i class="fas fa-star" data-index="5"></i>
+            </div>
         </section>
     </main>
 
-    <section class="comentarios">
-        <h2>Comentarios</h2>
-        <ol>
-            <li class="comentario">
-                <img src="default.jpg" alt="Usuario 1">
-                <div class="info">
-                    <h3>Usuario 1</h3>
-                    <p>Comentario 1</p>
-                </div>
-            </li>
-            <li class="comentario">
-                <img src="default.jpg" alt="Usuario 2">
-                <div class="info">
-                    <h3>Usuario 2</h3>
-                    <p>Comentario 2</p>
-                </div>
-            </li>
-        </ol>
-    </section>
+    <div class="comentarios-container">
+        <section class="comentarios">
+            <h2>Comentarios</h2>
+            <ol>
+                <li class="comentario">
+                    <img src="../../multimedia/default/default.jpg" alt="Usuario 1">
+                    <div class="info">
+                        <h3>Usuario 1</h3>
+                        <p>Comentario 1</p>
+                    </div>
+                </li>
+                <li class="comentario">
+                    <img src="../../multimedia/default/default.jpg" alt="Usuario 2">
+                    <div class="info">
+                        <h3>Usuario 2</h3>
+                        <p>Comentario 2</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+    </div>
 
     <!-- Ventana emergente -->
     <div class="popup" id="popup">

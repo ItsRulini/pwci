@@ -144,15 +144,39 @@ main {
     padding: 20px;
 }
 
-.estrellas {
-    color: #ffcc00;
+.estrellas{
+    color: #5f5b4e;
+    cursor: pointer;
     font-size: 24px;
 }
 
+/* Estrellas de calificación con animación 
+.estrellas {
+    color: #5f5b4e;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.estrellas i {
+    transition: color 0.3s;
+}
+
+Estrellas activadas por hover o click 
+.estrellas i.active {
+    color: #ffcc00;
+} */
 
 /* Sección de comentarios */
+.comentarios-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
 .comentarios {
-    width: 100%;
+    width: 75%;
     background-color: #444;
     padding: 20px;
     color: whitesmoke;
@@ -296,4 +320,24 @@ main {
 .popup.mostrar {
     visibility: visible;
     opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .categorias {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .producto, .calificacion, .comentarios {
+        width: 90%; /* Make the product card wider on smaller screens */
+    }
+
+    .multimedia img,
+    .multimedia video {
+        max-width: 100%; /* Make multimedia items responsive */
+    }
+    
+    .producto .fa-ellipsis-v {
+        top: 740px;
+        right: 90px;
+    }
 }
