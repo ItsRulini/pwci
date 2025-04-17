@@ -42,96 +42,110 @@
         
         <!-- Lista de productos en el carrito -->
         
-        <ul class="contenido-carrito">
-            <li class="producto">
-                <img src="../../multimedia/default/default.jpg" alt="Smartphone XYZ Pro">
-                <div class="info">
-                    <span>Smartphone XYZ Pro</span>
-                    <p>$3,499 MXN</p>
-                    <div class="cantidad">
-                        <button type="button">-</button>
-                        <span>1</span>
-                        <button type="button">+</button>
+        <div class="carrito">
+            <ul class="contenido-carrito">
+                <li class="producto">
+                    <img src="../../multimedia/default/default.jpg" alt="Smartphone XYZ Pro">
+                    <div class="info">
+                        <span>Smartphone XYZ Pro</span>
+                        <p>$3,499 MXN</p>
+                        <div class="cantidad">
+                            <button type="button">-</button>
+                            <span>1</span>
+                            <button type="button">+</button>
+                        </div>
                     </div>
+                    <div class="acciones">
+                        <button class="eliminar-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </li>
+                
+                <li class="producto">
+                    <img src="../../multimedia/default/default.jpg" alt="Audífonos Bluetooth">
+                    <div class="info">
+                        <span>Audífonos Bluetooth</span>
+                        <p>$899 MXN</p>
+                        <div class="cantidad">
+                            <button type="button">-</button>
+                            <span>2</span>
+                            <button type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="acciones">
+                        <button class="eliminar-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </li>
+                
+                <li class="producto">
+                    <img src="../../multimedia/default/default.jpg" alt="Smartwatch Sport">
+                    <div class="info">
+                        <span>Smartwatch Sport</span>
+                        <p>$2,199 MXN</p>
+                        <div class="cantidad">
+                            <button type="button">-</button>
+                            <span>1</span>
+                            <button type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="acciones">
+                        <button class="eliminar-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="resumen-carrito">
+                <div class="linea-resumen">
+                    <span>Subtotal</span>
+                    <span>$7,496 MXN</span>
                 </div>
-                <div class="acciones">
-                    <button class="eliminar-btn">
-                        <i class="fas fa-trash"></i>
+                <div class="linea-resumen">
+                    <span>Envío</span>
+                    <span>$150 MXN</span>
+                </div>
+                <div class="linea-resumen">
+                    <span>Impuestos</span>
+                    <span>$1,224 MXN</span>
+                </div>
+                
+                <div class="linea-total">
+                    <span>Total</span>
+                    <span>$8,870 MXN</span>
+                </div>
+                
+                <div class="acciones-carrito">
+                    <div id="paypal-button-container"></div>
+
+                    <button class="btn-comprar">
+                        Proceder al pago <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="clear-btn">
+                        Vaciar carrito <i class="fas fa-trash"></i>
                     </button>
                 </div>
-            </li>
-            
-            <li class="producto">
-                <img src="../../multimedia/default/default.jpg" alt="Audífonos Bluetooth">
-                <div class="info">
-                    <span>Audífonos Bluetooth</span>
-                    <p>$899 MXN</p>
-                    <div class="cantidad">
-                        <button type="button">-</button>
-                        <span>2</span>
-                        <button type="button">+</button>
-                    </div>
-                </div>
-                <div class="acciones">
-                    <button class="eliminar-btn">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </li>
-            
-            <li class="producto">
-                <img src="../../multimedia/default/default.jpg" alt="Smartwatch Sport">
-                <div class="info">
-                    <span>Smartwatch Sport</span>
-                    <p>$2,199 MXN</p>
-                    <div class="cantidad">
-                        <button type="button">-</button>
-                        <span>1</span>
-                        <button type="button">+</button>
-                    </div>
-                </div>
-                <div class="acciones">
-                    <button class="eliminar-btn">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </li>
-        </ul>
-        
-        <div class="resumen-carrito">
-            <div class="linea-resumen">
-                <span>Subtotal</span>
-                <span>$7,496 MXN</span>
+                
             </div>
-            <div class="linea-resumen">
-                <span>Envío</span>
-                <span>$150 MXN</span>
-            </div>
-            <div class="linea-resumen">
-                <span>Impuestos</span>
-                <span>$1,224 MXN</span>
-            </div>
-            
-            <div class="linea-total">
-                <span>Total</span>
-                <span>$8,870 MXN</span>
-            </div>
-            
-            <button class="btn-comprar">
-                Proceder al pago <i class="fas fa-arrow-right"></i>
-            </button>
         </div>
 
         
         
         <!-- Si el carrito está vacío (descomentar y comentar el contenido anterior para mostrar esto)-->
-        <!--
-        <div class="carrito-vacio">
+        
+        <div class="carrito-vacio" style="display: none;">
             <i class="fas fa-shopping-cart" style="font-size: 50px; color: #ddd; margin-bottom: 20px;"></i>
             <p>Tu carrito está vacío</p>
             <a href="main.html" class="btn-seguir-comprando">Seguir comprando</a>
         </div>
-        -->
+        
     </section>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=Adxi5Pt83dliN05vencduR0nFE9NnQtbHJTl6AG7-aaUCJRA63cJjlcFWJxvTcwk45QVZQ-ON0WWXgVw&currency=MXN"></script>
+    <script src="carrito.js"></script>
+
 </body>
 </html>

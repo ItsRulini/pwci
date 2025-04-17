@@ -131,8 +131,15 @@
     font-weight: bold;
 }
 
+.acciones-carrito{
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
 /* Botón de comprar */
-.btn-comprar {
+.btn-comprar, .clear-btn {
     display: block;
     width: 100%;
     background-color: #ffcc00;
@@ -142,13 +149,22 @@
     padding: 15px;
     border: none;
     border-radius: 8px;
-    margin-top: 20px;
+    margin-top: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
+.clear-btn{
+    background-color: #333;
+    color: whitesmoke;
+}
+
 .btn-comprar:hover {
     background-color: #ffdb4d;
+}
+
+.clear-btn:hover {
+    background-color: #444;
 }
 
 /* Mensaje de carrito vacío */
