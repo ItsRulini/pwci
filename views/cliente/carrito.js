@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 layout: 'vertical',
                 color: 'gold',
                 shape: 'rect',
-                label: 'paypal',
-                with: 100,
+                label: 'pay',
+                width: 100,
                 height: 40
             },
             createOrder: function (data, actions) {
