@@ -104,8 +104,11 @@ $usuario = $_SESSION['usuario'];
             <ul class="listas">
         
                 <li class="lista">
-                    <span>Lista de Deseos: Tecnología</span>
-                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="headerLista">
+                        <span>Lista de Deseos: Tecnología</span>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    
                     <p>Productos electrónicos que me interesan</p>
                     <ol class="contenidoLista">
                         <li class="producto">
@@ -123,10 +126,24 @@ $usuario = $_SESSION['usuario'];
                             </div>
                         </li>
                     </ol>
+
+                    <div class="pop-up-options" style="display: none;">
+                        <div class="pop-up-content">
+                            <span class="close btnCerrarPopupOptions">&times;</span>
+
+                            <h3>Opciones de lista</h3>
+                            <button id="btnEliminarLista">Eliminar lista</button>
+                            <button id="btnEditarLista">Editar lista</button>
+                        </div>
+                    </div>
                 </li>
         
                 <li class="lista">
-                    <span>Lista de Deseos: Ropa</span>
+                    <div class="headerLista">
+                        <span>Lista de Deseos: Ropa</span>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    
                     <p>Artículos de moda que quiero comprar</p>
                     <ol class="contenidoLista">
                         <li class="producto">
@@ -137,6 +154,16 @@ $usuario = $_SESSION['usuario'];
                             </div>
                         </li>
                     </ol>
+                    
+                    <div class="pop-up-options" style="display: none;">
+                        <div class="pop-up-content">
+                            <span class="close btnCerrarPopupOptions">&times;</span>
+
+                            <h3>Opciones de lista</h3>
+                            <button id="btnEliminarLista">Eliminar lista</button>
+                            <button id="btnEditarLista">Editar lista</button>
+                        </div>
+                    </div>
                 </li>
         
             </ul>
@@ -167,6 +194,7 @@ $usuario = $_SESSION['usuario'];
                 </form>
             </div>
         </div>
+
     </section>
 
     <script src="perfil.js"></script>
