@@ -390,5 +390,8 @@
 /* Responsive */
 @media (max-width: 768px) {
 
+    .popup-editar {
+        width: 300px;
+    }
     
 }

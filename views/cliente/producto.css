@@ -150,21 +150,7 @@ main {
     font-size: 24px;
 }
 
-/* Estrellas de calificación con animación 
-.estrellas {
-    color: #5f5b4e;
-    cursor: pointer;
-    font-size: 24px;
-}
 
-.estrellas i {
-    transition: color 0.3s;
-}
-
-Estrellas activadas por hover o click 
-.estrellas i.active {
-    color: #ffcc00;
-} */
 
 /* Sección de comentarios */
 .comentarios-container {
