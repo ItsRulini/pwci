@@ -345,7 +345,47 @@
     color: white;
 }
 
+.popup-editar {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #444;
+    color: whitesmoke;
+    padding: 20px;
+    border: 2px solid #27251f;
+    border-radius: 8px;
+    z-index: 1000;
+}
 
+.popup-editar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.producto-editar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+}
+
+#btnGuardarCambios{
+    margin-top: 10px;
+    background-color: #333;
+    color: whitesmoke;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#btnGuardarCambios:hover {
+    color: black;
+    background-color: #ffcc00;
+}
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -132,8 +132,8 @@ $usuario = $_SESSION['usuario'];
                             <span class="close btnCerrarPopupOptions">&times;</span>
 
                             <h3>Opciones de lista</h3>
-                            <button id="btnEliminarLista">Eliminar lista</button>
                             <button id="btnEditarLista">Editar lista</button>
+                            <button id="btnEliminarLista">Eliminar lista</button>
                         </div>
                     </div>
                 </li>
@@ -160,8 +160,8 @@ $usuario = $_SESSION['usuario'];
                             <span class="close btnCerrarPopupOptions">&times;</span>
 
                             <h3>Opciones de lista</h3>
-                            <button id="btnEliminarLista">Eliminar lista</button>
                             <button id="btnEditarLista">Editar lista</button>
+                            <button id="btnEliminarLista">Eliminar lista</button>
                         </div>
                     </div>
                 </li>
@@ -194,6 +194,32 @@ $usuario = $_SESSION['usuario'];
                 </form>
             </div>
         </div>
+
+        <!--Pop-up para la edicion de la lista-->
+        <div id="popupEditarLista" class="popup-editar" style="display: none;">
+            <div class="popup-editar-content">
+                <span class="close" id="btnCerrarEditarLista">&times;</span>
+
+                <h3>Editar Lista</h3>
+
+                <div class="privacidadLista">
+                    <h3>Privacidad: </h3>
+
+                    <section>
+                        <input id="privadaLista" type="radio" name="listaPrivacidad" value="Privado">
+                        <label for="privadaLista">Privada</label>
+                        <input id="publicaLista" type="radio" name="listaPrivacidad" value="Público">
+                        <label for="publicaLista">Pública</label>
+                    </section>
+                </div>
+
+                <h4>Productos:</h4>
+                <ul id="listaProductosEditar"></ul>
+
+                <button id="btnGuardarCambios">Guardar Cambios</button>
+            </div>
+        </div>
+
 
     </section>
 
