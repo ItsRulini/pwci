@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
             estrella.addEventListener("click", () => {
                 calificacionActual = index + 1;
                 actualizarEstrellas(calificacionActual);
-                console.log("Calificación seleccionada para este producto:", calificacionActual);
+                grupo.dataset.calificacion = calificacionActual;
             });
         });
 
@@ -28,4 +28,36 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
+
+    const resultados = []; // Aquí vamos a guardar todas las calificaciones
+    // Botón de guardar calificaciones
+    const botonGuardar = document.getElementById("calificar-btn");
+    botonGuardar.addEventListener("click", () => {
+        resultados.length = 0; // Limpiar el array antes de guardar nuevo
+
+        const filas = document.querySelectorAll("table tr");
+
+        filas.forEach(fila => {
+            const categoria = fila.children[0]?.textContent.trim();
+            const producto = fila.children[1]?.textContent.trim();
+            const estrellasDiv = fila.querySelector(".estrellas");
+            const comentarioInput = fila.querySelector(".comentario");
+
+            if (estrellasDiv && comentarioInput) {
+                const calificacion = estrellasDiv.dataset.calificacion || 0;
+                const comentario = comentarioInput.value.trim();
+
+                resultados.push({
+                    categoria,
+                    producto,
+                    calificacion: Number(calificacion),
+                    comentario
+                });
+            }
+        });
+
+        console.log("Resultados guardados:", resultados);
+        alert("¡Calificaciones guardadas! Revisa la consola (F12).");
+    });
+
 });

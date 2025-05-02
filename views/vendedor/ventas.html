@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de ventas</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="ventas.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="main.html" class="logo-link">
+            <h1 class="logo">Papu Tienda</h1>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="perfil.php">Perfil</a></li>
+            <li><a href="chat.html">Chat</a></li>
+            <li><a href="ventas.html">Ventas</a></li>
+            <li><a href="../index.php">Cerrar sesión</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1>Consulta de ventas</h1>
+
+        <aside class="filtros">
+            <h2>Filtros</h2>
+            <form id="filtrosForm">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    <option value="ropa">Ropa</option>
+                    <option value="electronica">Electrónica</option>
+                    <option value="hogar">Hogar</option>
+                </select>
+
+                <label for="fecha">Fecha de venta</label>
+                <input type="date" id="desdeFechaVenta" name="desde">
+                <input type="date" id="hastaFechaVenta" name="hasta">
+
+                <button type="submit">Aplicar Filtros</button>
+            </form>
+        </aside>
+
+        <section class="ventas-detallada-section">
+            <h2>Consulta detallada</h2>
+
+            <div class="table-content">
+                <table class="ventas-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha y hora de venta</th>
+                            <th>Categoría</th>
+                            <th>Producto</th>
+                            <th>Calificación</th>
+                            <th>Precio</th>
+                            <th>Existencia actual en stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventasBody">
+                        <tr>
+                            <td>2023-10-01 14:30</td>
+                            <td>Ropa</td>
+                            <td>Camiseta</td>
+                            <td>4.5</td>
+                            <td>$20.00 MXN</td>
+                            <td>50</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <section class="venta-agrupada-section">
+            <h2>Consulta agrupada</h2>
+
+            <div class="table-content">
+                <table class="ventas-table">
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Categoría</th>
+                            <th>Número de ventas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventasBody">
+                        <tr>
+                            <td>Enero</td>
+                            <td>
+                                Ropa <br>
+                                Tecnología
+                            </td>
+                            <td>
+                                10 <br>
+                                50
+                            </td>
+                        </tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+    
+</body>
+</html>
