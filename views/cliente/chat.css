@@ -31,20 +31,6 @@
     color: whitesmoke;
 }
 
-.new-chat-btn {
-    background-color: #ffcc00;
-    color: #333;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
 .chat-search {
     padding: 10px 15px;
     border-bottom: 1px solid #eee;
@@ -131,19 +117,6 @@
 .time {
     font-size: 12px;
     color: #999;
-}
-
-.unread {
-    background-color: #ffcc00;
-    color: #333;
-    font-size: 12px;
-    font-weight: bold;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Estilo para la conversación (section) */
@@ -247,6 +220,46 @@
     color: black;
     border-bottom-right-radius: 5px;
 }
+
+.offer-content {
+    background-color: #222;
+    color: whitesmoke;
+    border-color: #ffcc00;
+    border-style: solid !important;
+    padding: 12px 15px;
+    border-radius: 18px;
+    position: relative;
+}
+
+.offer-content .button-disapprove,
+.offer-content .button-approve {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    margin: 14px 4px 4px 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: white;
+}
+
+.offer-content .button-approve {
+    background-color: #4CAF50;
+}
+
+.offer-content .button-approve:hover {
+    background-color: #45a049;
+}
+
+
+.offer-content .button-disapprove {
+    background-color: #f44336;
+}
+
+.offer-content .button-disapprove:hover{
+    background-color: #d7372c;
+}
+
 
 .message-time {
     font-size: 11px;
