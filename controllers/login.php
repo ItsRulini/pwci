@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $usuarioDAO = new UsuarioDAO($conn);
     $userData = $usuarioDAO->loginUsuario($usuario, $pass);
 
-    if ($userData != null) {
+    if ($userData instanceof Usuario) {
 
         session_start();
         $_SESSION['usuario'] = $userData; // Guardar en sesión
@@ -50,8 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
 
     } else {
-        // Si las credenciales son incorrectas, redirige al login con un mensaje
-        header("Location: ../views/index.php?error=1");
+        // $userData trae un mensaje de error
+        header("Location: ../views/index.php?error=" . urlencode($userData));
         exit();
     }
 

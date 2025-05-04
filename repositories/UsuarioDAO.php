@@ -23,22 +23,28 @@ class UsuarioDAO
 
             if ($resultado->num_rows > 0) {
                 $fila = $resultado->fetch_assoc();
-
-                $userData = new Usuario();
-                $userData->setIdUsuario($fila["idUsuario"]);
-                $userData->setNombreUsuario($fila["nombreUsuario"]);
-                $userData->setContraseña($fila["contraseña"]);
-                $userData->setEmail($fila["email"]);
-                $userData->setFotoAvatar($fila["fotoAvatar"]);
-                $userData->setNombres($fila["nombres"]);
-                $userData->setPaterno($fila["paterno"]);
-                $userData->setMaterno($fila["materno"]);
-                $userData->setFechaNacimiento($fila["fechaNacimiento"]);
-                $userData->setRol($fila["rol"]);
-                $userData->setGenero($fila["genero"]);
-                $userData->setPrivacidad($fila["privacidad"]);
+    
+                if (isset($fila['mensaje'])) {
+                    // El procedimiento devolvió un error
+                    $userData = $fila['mensaje']; // Aquí devolvemos el mensaje de error ("Usuario dado de baja" o "Credenciales incorrectas")
+                } else {
+                    // El procedimiento devolvió los datos del usuario
+                    $userData = new Usuario();
+                    $userData->setIdUsuario($fila["idUsuario"]);
+                    $userData->setNombreUsuario($fila["nombreUsuario"]);
+                    $userData->setContraseña($fila["contraseña"]);
+                    $userData->setEmail($fila["email"]);
+                    $userData->setFotoAvatar($fila["fotoAvatar"]);
+                    $userData->setNombres($fila["nombres"]);
+                    $userData->setPaterno($fila["paterno"]);
+                    $userData->setMaterno($fila["materno"]);
+                    $userData->setFechaNacimiento($fila["fechaNacimiento"]);
+                    $userData->setRol($fila["rol"]);
+                    $userData->setGenero($fila["genero"]);
+                    $userData->setPrivacidad($fila["privacidad"]);
+                }
             } else {
-                $userData = null;
+                $userData = "Credenciales incorrectas"; // No hay ningún registro
             }
             $stmt->close();
 
@@ -124,6 +130,8 @@ class UsuarioDAO
                     $usuario->setEmail($fila["email"]);
                     $usuario->setRol($fila["rol"]);
                     $usuario->setFechaRegistro($fila["fechaRegistro"]);
+                    $usuario->setEstatus($fila["estatus"]);
+
                     array_push($usuarios, $usuario);
                 }
             } else {

@@ -51,6 +51,7 @@
                         <th>Correo</th>
                         <th>Rol</th>
                         <th>Fecha de registro</th>
+                        <th>Estatus</th>
                     </tr>
                 </thead>
                 <tbody id="usuarios-list">
@@ -63,6 +64,7 @@
                             <td><?php echo htmlspecialchars($item->getEmail()); ?></td>
                             <td><?php echo htmlspecialchars($item->getRol()); ?></td>
                             <td><?php echo htmlspecialchars($item->getFechaRegistro()); ?></td>
+                            <td><?php echo htmlspecialchars($item->getEstatus() ? 'Activo' : 'Inactivo'); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     

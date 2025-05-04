@@ -15,6 +15,8 @@ class Usuario {
 
     private string $privacidad;
 
+    private bool $estatus; // Estado del usuario (activo o inactivo)
+
     public function __construct() {}
 
     public function getIdUsuario(): int {
@@ -100,6 +102,14 @@ class Usuario {
     public function setPrivacidad(string $privacidad): void {
         $this->privacidad = $privacidad;
     }
+
+    public function getEstatus(): bool {
+        return $this->estatus;
+    }
+    public function setEstatus(bool $estatus): void {
+        $this->estatus = $estatus;
+    }
+
 }
 
 ?>

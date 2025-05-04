@@ -1,7 +1,7 @@
 <?php
-    if (isset($_GET["error"]) && $_GET["error"] == 1) {
-         echo "<script>alert('Credenciales incorrectas, intenta de nuevo.');
-         window.location.assign('index.php')</script>";
+    if (isset($_GET["error"])) {
+        $error = urldecode($_GET["error"]);
+        echo "<script>alert('$error'); window.location.assign('index.php');</script>";
     }
     
 ?>
