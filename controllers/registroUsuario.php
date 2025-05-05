@@ -3,8 +3,13 @@ require_once '../connection/conexion.php';
 require_once '../models/Usuario.php';
 require_once '../repositories/UsuarioDAO.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    
+
     $email = $_POST["email"];
     $usuario = $_POST["usuario"];
     $pass = $_POST["pass"];
@@ -20,13 +25,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die(json_encode(["success" => false, "message" => "Error de conexión"]));
     }
 
+    $usuarioDAO = new UsuarioDAO($conn);
+    $userEmail = $usuarioDAO->validarCorreo($email);
+
+    if (!$userEmail) {
+        exit(json_encode(["success" => false, "message" => "El correo ya está en uso."]));
+    }
+    $userUser = $usuarioDAO->validarUsuario($usuario);
+
+    if (!$userUser) {
+        exit(json_encode(["success" => false, "message" => "El usuario ya está en uso."]));
+    }
+
     // Manejo de la escritura del archivo en la carpeta
     $carpeta = "../multimedia/imagenPerfil/";
-    $nombreArchivo = $usuario . basename($_FILES["avatar"]["name"]);
+    $nombreArchivo = $usuario . ".jpg";// . basename($_FILES["avatar"]["name"]);
     $ruta = $carpeta . $nombreArchivo;
 
     $avatar = $nombreArchivo;
-    
+
     // Crear un nuevo usuario
     $nuevoUsuario = new Usuario();
     $nuevoUsuario->setNombreUsuario($usuario);
@@ -39,20 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nuevoUsuario->setFechaNacimiento($nacimiento);
     $nuevoUsuario->setRol($rol);
     $nuevoUsuario->setGenero($sexo);
-    
+
     // Llamando al dao para crear un nuevo usuario
-    $usuarioDAO = new UsuarioDAO($conn);
+
     $good = $usuarioDAO->registrarUsuario($nuevoUsuario);
 
-    if($good){
-
-        if (!move_uploaded_file($_FILES["avatar"]["tmp_name"],$ruta)) {
-            echo $ruta;
-            die(json_encode(["success" => false, "message" => "Error al subir la imagen."]));
+    if ($good) {
+        if (!move_uploaded_file($_FILES["avatar"]["tmp_name"], $ruta)) {
+            exit(json_encode(["success" => false, "message" => "Error al subir la imagen."]));
         }
-
-        header("Location: ../views/index.php");
-        exit();
+        exit(json_encode(["success" => true, "message" => "Usuario registrado correctamente."]));
+    } else {
+        exit(json_encode(["success" => false, "message" => "Error al registrar usuario."]));
     }
 }
 

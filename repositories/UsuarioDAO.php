@@ -23,7 +23,7 @@ class UsuarioDAO
 
             if ($resultado->num_rows > 0) {
                 $fila = $resultado->fetch_assoc();
-    
+
                 if (isset($fila['mensaje'])) {
                     // El procedimiento devolvió un error
                     $userData = $fila['mensaje']; // Aquí devolvemos el mensaje de error ("Usuario dado de baja" o "Credenciales incorrectas")
@@ -93,17 +93,13 @@ class UsuarioDAO
                 $nacimiento
             );
 
-            // Ejecutar la consulta
             if ($stmt->execute()) {
-                echo json_encode(["success" => true, "message" => "Usuario registrado con éxito"]);
+                $stmt->close();
                 return true;
-
             } else {
-                echo json_encode(["success" => false, "message" => "Error en la ejecución: " . $stmt->error]);
+                $stmt->close();
+                return false;
             }
-
-            $stmt->close();
-            $this->conn->close();
 
         } catch (mysqli_sql_exception $e) {
             error_log("Error en loginUsuario: " . $e->getMessage()); // Loguear el error
@@ -112,6 +108,59 @@ class UsuarioDAO
         return false;
     }
 
+    public function validarCorreo($email): bool
+    {
+        try {
+            // Llamada al procedimiento almacenado
+            $sql = "CALL spValidarEmailExistente(?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
+
+            $existe = ($stmt->num_rows > 0) ? false : true;
+
+            $stmt->free_result();
+            $stmt->close();
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+            }
+
+            return $existe;
+
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error en validarCorreo: " . $e->getMessage()); // Loguear el error
+        }
+
+        return false;
+
+    }
+
+    public function validarUsuario($usuario): bool
+    {
+        try {
+            // Llamada al procedimiento almacenado
+            $sql = "CALL spValidarUsuarioExistente(?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $usuario);
+            $stmt->execute();
+            $stmt->store_result(); // <<<<<< CAMBIO AQUÍ
+
+            $existe = ($stmt->num_rows > 0) ? false : true; // <<<<< TAMBIÉN CAMBIO
+
+            $stmt->free_result(); // <<<<<
+            $stmt->close();
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+            }
+
+            return $existe;
+
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error en validarUsuario: " . $e->getMessage()); // Loguear el error
+        }
+
+        return false;
+
+    }
     public function getUsuariosRegistrados()
     {
         $usuarios = array();

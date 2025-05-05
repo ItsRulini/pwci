@@ -180,6 +180,12 @@ label[for="input-file"]:hover {
     display: none;
 }
 
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
 /* Responsive */
 @media (max-width: 400px) {
     .contenedorForm {
