@@ -26,7 +26,7 @@ $usuario = $_SESSION['usuario'];
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="main.html" class="logo-link">
+        <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
         </a>
         
@@ -36,12 +36,12 @@ $usuario = $_SESSION['usuario'];
         </div>
 
         <ul class="nav-links">
-            <li><a href="social.html">Social</a></li>
-            <li><a href="compra.html">Compras</a></li>
+            <li><a href="social.php">Social</a></li>
+            <li><a href="compra.php">Compras</a></li>
             <li><a href="perfil.php">Perfil</a></li>
-            <li><a href="chat.html">Chat</a></li>
+            <li><a href="chat.php">Chat</a></li>
             <li>
-                <a href="carrito.html">
+                <a href="carrito.php">
                 <i class="fas fa-shopping-cart" style="color: #ffcc00; font-size: 20px;"></i>
                 </a>
             </li>

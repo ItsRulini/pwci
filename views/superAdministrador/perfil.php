@@ -32,8 +32,8 @@ $usuario = $_SESSION['usuario'];
 
         <ul class="nav-links">
             <li><a href="perfil.php">Perfil</a></li>
-            <li><a href="registro.html">Registro</a></li>
-            <li><a href="../index.php">Cerrar sesión</a></li>
+            <li><a href="registro.php">Registro</a></li>
+            <li><a href="../logout.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 

@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 break;
             case 'Comprador':
                 // Redirigir a la página del cliente
-                header("Location: ../views/cliente/main.html");
+                header("Location: ../views/cliente/main.php");
                 break;
             default:
                 // Redirigir a una página de error o acceso denegado
