@@ -10,5 +10,5 @@ document.getElementById("input-file").addEventListener("change", function(event)
 });
 
 document.querySelector(".card-button-ver-mas").addEventListener("click", function() {
-    window.location.href = "producto.html";
+    window.location.href = "producto.php";
 });

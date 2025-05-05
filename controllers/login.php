@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 break;
             case 'Admin':
                 // Redirigir a la página del administrador
-                header("Location: ../views/administrador/main.html");
+                header("Location: ../views/administrador/main.php");
                 break;
             case 'Vendedor':
                 // Redirigir a la página del vendedor

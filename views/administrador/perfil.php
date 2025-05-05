@@ -26,13 +26,13 @@ $usuario = $_SESSION['usuario'];
 
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="main.html" class="logo-link">
+        <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
         </a>
 
         <ul class="nav-links">
             <li><a href="perfil.php">Perfil</a></li>
-            <li><a href="../index.php">Cerrar sesión</a></li>
+            <li><a href="../logout.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 
