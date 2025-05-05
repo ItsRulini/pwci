@@ -1,3 +1,15 @@
+<?php
+require_once '../../models/Usuario.php';
+
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../index.php"); // Redirigir al login si no hay sesión
+    exit();
+}
+
+$usuario = $_SESSION['usuario'];
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,15 +25,15 @@
     
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="main.html" class="logo-link">
+        <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
         </a>
 
         <ul class="nav-links">
             <li><a href="perfil.php">Perfil</a></li>
-            <li><a href="chat.html">Chat</a></li>
-            <li><a href="ventas.html">Ventas</a></li>
-            <li><a href="../index.php">Cerrar sesión</a></li>
+            <li><a href="chat.php">Chat</a></li>
+            <li><a href="ventas.php">Ventas</a></li>
+            <li><a href="../logout.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 
@@ -88,7 +100,7 @@
                 <div class="chat-user-info">
                     <img src="../../multimedia/default/default.jpg" alt="Usuario 1">
                     <div>
-                        <a href="perfil.html" target="_blank"><h3>Usuario 1</h3></a>
+                        <a href="perfil.php" target="_blank"><h3>Usuario 1</h3></a>
                     </div>
                 </div>
                 

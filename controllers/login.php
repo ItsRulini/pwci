@@ -19,14 +19,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         session_start();
         $_SESSION['usuario'] = $userData; // Guardar en sesión
-
+        $conn->close(); // Cerrar la conexión a la base de datos
         // Switch para redirigir según el rol del usuario
         switch ($userData->getRol()) {
             case 'SuperAdmin':
 
                 //$_SESSION['usuarios'] = $usuarioDAO->getUsuariosRegistrados(); // Guardar en sesión
 
-                $conn->close(); // Cerrar la conexión a la base de datos
+                //$conn->close(); // Cerrar la conexión a la base de datos
                 // Redirigir a la página del superadministrador
                 header("Location: ../views/superAdministrador/main.php");
                 break;
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 break;
             case 'Vendedor':
                 // Redirigir a la página del vendedor
-                header("Location: ../views/vendedor/main.html");
+                header("Location: ../views/vendedor/main.php");
                 break;
             case 'Comprador':
                 // Redirigir a la página del cliente
