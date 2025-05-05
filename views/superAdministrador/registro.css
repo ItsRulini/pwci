@@ -161,3 +161,9 @@ label[for="input-file"]:hover {
 .sexo input[type="radio"] {
     display: none;
 }
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}

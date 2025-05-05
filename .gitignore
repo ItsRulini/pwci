@@ -5,3 +5,4 @@ multimedia/*.gif
 multimedia/*.bmp
 multimedia/*.svg
 multimedia/*.webp
+!multimedia/imagenPerfil/.gitkeep

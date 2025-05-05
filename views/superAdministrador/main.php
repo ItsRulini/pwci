@@ -1,19 +1,20 @@
 <?php
-    require_once '../../models/Usuario.php';
+require_once '../../models/Usuario.php';
 
-    session_start();
-    if (!isset($_SESSION['usuario'])) {
-        header("Location: ../index.php"); // Redirigir al login si no hay sesión
-        exit();
-    }
-    
-    $usuario = $_SESSION['usuario'];
-    $usuarios = $_SESSION['usuarios']; // Obtener la lista de usuarios desde la sesión
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../index.php"); // Redirigir al login si no hay sesión
+    exit();
+}
+
+$usuario = $_SESSION['usuario'];
+//$usuarios = $_SESSION['usuarios']; // Obtener la lista de usuarios desde la sesión
 ?>
 
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +25,7 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="main.css">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -55,19 +57,11 @@
                     </tr>
                 </thead>
                 <tbody id="usuarios-list">
-                    
+
                     <!-- Aquí se llenarán los datos de los usuarios desde el servidor -->
-                    <?php foreach ($usuarios as $item): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($item->getIdUsuario()); ?></td>
-                            <td><?php echo htmlspecialchars($item->getNombreUsuario()); ?></td>
-                            <td><?php echo htmlspecialchars($item->getEmail()); ?></td>
-                            <td><?php echo htmlspecialchars($item->getRol()); ?></td>
-                            <td><?php echo htmlspecialchars($item->getFechaRegistro()); ?></td>
-                            <td><?php echo htmlspecialchars($item->getEstatus() ? 'Activo' : 'Inactivo'); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    
+
+                    <script src="main.js"></script>
+
                 </tbody>
             </table>
 
@@ -76,4 +70,5 @@
     </main>
 
 </body>
+
 </html>

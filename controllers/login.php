@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         switch ($userData->getRol()) {
             case 'SuperAdmin':
 
-                $_SESSION['usuarios'] = $usuarioDAO->getUsuariosRegistrados(); // Guardar en sesión
+                //$_SESSION['usuarios'] = $usuarioDAO->getUsuariosRegistrados(); // Guardar en sesión
 
                 $conn->close(); // Cerrar la conexión a la base de datos
                 // Redirigir a la página del superadministrador
