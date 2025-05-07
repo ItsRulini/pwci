@@ -4,6 +4,7 @@
     justify-content: center;  /* Centra horizontalmente */
     align-items: center;      /* Centra verticalmente */
     height: 100vh;            /* Ocupa toda la altura de la pantalla */
+    padding: 20px 20px 20px 20px;
     background-color: #f3f3f3;
 }
 
@@ -15,7 +16,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 400px;
-    transform: translateY(180px); /* Mueve hacia abajo */
+    transform: translateY(230px); /* Mueve hacia abajo */
 }
 
 /* Título */
@@ -165,5 +166,5 @@ label[for="input-file"]:hover {
 .error-message {
     color: red;
     font-size: 0.9em;
-    margin-top: 5px;
+    /* margin-top: 5px; */
 }

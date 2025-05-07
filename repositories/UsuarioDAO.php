@@ -108,6 +108,55 @@ class UsuarioDAO
         return false;
     }
 
+    // Dentro de la clase UsuarioDAO en repositories/UsuarioDAO.php
+
+    public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento): bool
+    {
+        try {
+            $sql = "CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($sql);
+
+            if ($stmt === false) {
+                // Loguear o manejar el error de preparación
+                error_log("Error en la preparación de spUpdateUsuario: " . $this->conn->error);
+                return false;
+            }
+
+            $stmt->bind_param(
+                "isssssss", // i para integer (idUsuario), s para strings
+                $idUsuario,
+                $nombreUsuario,
+                $email,
+                $nombres,
+                $paterno,
+                $materno,
+                $fotoAvatar,
+                $fechaNacimiento
+            );
+
+            if ($stmt->execute()) {
+                // Verificar si alguna fila fue afectada para confirmar la actualización
+                if ($stmt->affected_rows > 0) {
+                    $stmt->close();
+                    return true;
+                } else {
+                    // No se actualizó ninguna fila, puede que el ID no exista o los datos sean los mismos
+                    $stmt->close();
+                    return false; // O true si consideras que no es un error si no hay cambios
+                }
+            } else {
+                // Loguear o manejar el error de ejecución
+                error_log("Error en la ejecución de spUpdateUsuario: " . $stmt->error);
+                $stmt->close();
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error en actualizarUsuario: " . $e->getMessage());
+            return false;
+        }
+        //return false; // Por si algo más falla
+    }
+
     public function validarCorreo($email): bool
     {
         try {

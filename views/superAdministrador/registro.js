@@ -83,8 +83,17 @@ document.getElementById('formRegistro').addEventListener('submit', function(e) {
 
     const pass = passInput.value;
     const usuario = usuarioInput.value;
+    const nacimientoInput = document.getElementById('nacimiento');
+    const nacimientoErrorDiv = document.getElementById('nacimiento-error');
+    const rolErrorDiv = document.getElementById('rol-error');
+    const sexoErrorDiv = document.getElementById('sexo-error');
 
     let valid = true;
+
+    // Limpia todos los errores anteriores
+    nacimientoErrorDiv.textContent = '';
+    rolErrorDiv.textContent = '';
+    sexoErrorDiv.textContent = '';
 
     // Validar contraseña
     if (!validarContraseña(pass)) {
@@ -95,6 +104,30 @@ document.getElementById('formRegistro').addEventListener('submit', function(e) {
     // Validar usuario
     if (!validarUsuario(usuario)) {
         usuarioErrorDiv.textContent = 'El usuario debe tener al menos 3 caracteres.';
+        valid = false;
+    }
+
+    // Validar fecha de nacimiento (no mayor a hoy)
+    const fechaNacimiento = new Date(nacimientoInput.value);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Limpiar hora para comparación exacta
+
+    if (fechaNacimiento > hoy) {
+        nacimientoErrorDiv.textContent = 'La fecha de nacimiento no puede ser mayor al día de hoy.';
+        valid = false;
+    }
+
+    // Validar que se seleccione un rol
+    const rolSeleccionado = document.querySelector('input[name="rol"]:checked');
+    if (!rolSeleccionado) {
+        rolErrorDiv.textContent = 'Debe seleccionar un rol.';
+        valid = false;
+    }
+
+    // Validar que se seleccione un sexo
+    const sexoSeleccionado = document.querySelector('input[name="sexo"]:checked');
+    if (!sexoSeleccionado) {
+        sexoErrorDiv.textContent = 'Debe seleccionar un género.';
         valid = false;
     }
 
@@ -112,7 +145,7 @@ document.getElementById('formRegistro').addEventListener('submit', function(e) {
         if (data.success) {
             // Si todo salió bien
             alert(data.message); // Puedes hacer un diseño más bonito aquí
-            document.getElementById('formRegistro').reset(); // Resetea el formulario
+            this.reset(); // Resetea el formulario
             window.location.href = "main.php"; // Redirecciona como en tu PHP
         } else {
             // Si hubo error

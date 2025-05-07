@@ -56,26 +56,27 @@ $usuario = $_SESSION['usuario'];
                 <input type="text" id="materno" placeholder="Apellido materno" name="materno" required>
 
                 <input type="date" id="nacimiento" name="nacimiento" required>
-                
+                <div id="nacimiento-error" class="error-message"></div>
+                            
                 <div class="rol">
                     <h3>Rol de usuario</h3>
-
                     <div>
-                        <input type="radio" id="admin" name="rol" value="Admin">
-                        <label for="admin">Administrador</label>
+                        <input type="radio" id="administrador" name="rol" value="Admin">
+                        <label for="administrador">Administrador</label>
                     </div>
-                    
+                    <div id="rol-error" class="error-message"></div>
                 </div>
-
+                
                 <div class="sexo">
                     <h3>Género</h3>
                     <div>
                         <input type="radio" id="masculino" name="sexo" value="Masculino">
                         <label for="masculino">Masculino</label>
-                
+                    
                         <input type="radio" id="femenino" name="sexo" value="Femenino">
                         <label for="femenino">Femenino</label>
                     </div>
+                    <div id="sexo-error" class="error-message"></div>
                 </div>
 
                 <input type="submit" id="submitRegistro" value="Registrarse">

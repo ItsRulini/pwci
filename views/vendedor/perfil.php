@@ -1,13 +1,23 @@
 <?php
-require '../../models/Usuario.php';
+// Al inicio de tus archivos perfil.php (ej. views/cliente/perfil.php)
+require_once '../../models/Usuario.php'; // o la ruta correcta
 
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
+    header("Location: ../index.php");
     exit();
 }
-
 $usuario = $_SESSION['usuario'];
+
+$successMessage = '';
+$errorMessage = '';
+
+if (isset($_GET['success'])) {
+    $successMessage = htmlspecialchars(urldecode($_GET['success']));
+}
+if (isset($_GET['error'])) {
+    $errorMessage = htmlspecialchars(urldecode($_GET['error']));
+}
 ?>
 
 <!DOCTYPE html>
@@ -38,12 +48,22 @@ $usuario = $_SESSION['usuario'];
         </ul>
     </nav>
 
+    <?php if ($successMessage): ?>
+        <div style="color: green; text-align: center; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
+            <?php echo $successMessage; ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($errorMessage): ?>
+        <div style="color: red; text-align: center; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 15px;">
+            <?php echo $errorMessage; ?>
+        </div>
+    <?php endif; ?>
+
     <section>
         <div class="infoGeneral">
+            <h2>Perfil de <?php echo strtolower($usuario->getRol()); ?></h2>
 
-            <h2>Perfil de vendedor</h2>
-
-            <form id="formPerfil" action="cambiosPerfil.php" method="POST" enctype="multipart/form-data">
+            <form id="formPerfil" action="../../controllers/actualizarUsuario.php" method="POST" enctype="multipart/form-data">
                 <input type="email" id="email" name="email" placeholder="Correo" value="<?php echo htmlspecialchars($usuario->getEmail()); ?>" required>
                 <input type="text" id="usuario" name="usuario" placeholder="Usuario" value="<?php echo htmlspecialchars($usuario->getNombreUsuario()); ?>" required>
                 <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
@@ -68,10 +88,8 @@ $usuario = $_SESSION['usuario'];
 
                 <input type="submit" id="submitPerfil" value="Guardar cambios">
             </form>
-
         </div>
     </section>
-
     <script src="perfil.js"></script>
 </body>
 </html>

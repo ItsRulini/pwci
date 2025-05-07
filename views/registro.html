@@ -35,18 +35,18 @@
                 <input type="text" id="materno" placeholder="Apellido materno" name="materno" required>
 
                 <input type="date" id="nacimiento" name="nacimiento" required>
-
+                <div id="nacimiento-error" class="error-message"></div>
+                            
                 <div class="rol">
                     <h3>Rol de usuario</h3>
-
                     <div>
                         <input type="radio" id="vendedor" name="rol" value="Vendedor">
                         <label for="vendedor">Vendedor</label>
-                
+                    
                         <input type="radio" id="cliente" name="rol" value="Comprador">
                         <label for="cliente">Cliente</label>
                     </div>
-                    
+                    <div id="rol-error" class="error-message"></div>
                 </div>
                 
                 <div class="sexo">
@@ -54,11 +54,13 @@
                     <div>
                         <input type="radio" id="masculino" name="sexo" value="Masculino">
                         <label for="masculino">Masculino</label>
-                
+                    
                         <input type="radio" id="femenino" name="sexo" value="Femenino">
                         <label for="femenino">Femenino</label>
                     </div>
+                    <div id="sexo-error" class="error-message"></div>
                 </div>
+
 
                 <input type="submit" id="submitRegistro" value="Registrarse">
             </form>
