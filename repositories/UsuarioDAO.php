@@ -110,14 +110,64 @@ class UsuarioDAO
 
     // Dentro de la clase UsuarioDAO en repositories/UsuarioDAO.php
 
+    // public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento): bool
+    // {
+    //     try {
+    //         $sql = "CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?)";
+    //         $stmt = $this->conn->prepare($sql);
+
+    //         if ($stmt === false) {
+    //             // Loguear o manejar el error de preparación
+    //             error_log("Error en la preparación de spUpdateUsuario: " . $this->conn->error);
+    //             return false;
+    //         }
+
+    //         $stmt->bind_param(
+    //             "isssssss", // i para integer (idUsuario), s para strings
+    //             $idUsuario,
+    //             $nombreUsuario,
+    //             $email,
+    //             $nombres,
+    //             $paterno,
+    //             $materno,
+    //             $fotoAvatar,
+    //             $fechaNacimiento
+    //         );
+
+    //         if ($stmt->execute()) {
+    //             // Verificar si alguna fila fue afectada para confirmar la actualización
+    //             if ($stmt->affected_rows > 0) {
+    //                 $stmt->close();
+    //                 return true;
+    //             } else {
+    //                 // No se actualizó ninguna fila, puede que el ID no exista o los datos sean los mismos
+    //                 $stmt->close();
+    //                 return false; // O true si consideras que no es un error si no hay cambios
+    //             }
+    //         } else {
+    //             // Loguear o manejar el error de ejecución
+    //             error_log("Error en la ejecución de spUpdateUsuario: " . $stmt->error);
+    //             $stmt->close();
+    //             return false;
+    //         }
+    //     } catch (mysqli_sql_exception $e) {
+    //         error_log("Error en actualizarUsuario: " . $e->getMessage());
+    //         return false;
+    //     }
+    //     //return false; // Por si algo más falla
+    // }
+
     public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento): bool
     {
         try {
+            // Asumiendo que tienes un procedimiento almacenado llamado spUpdateUsuario
+            // ¡ASEGÚRATE QUE TU SP actualice el campo fotoAvatar!
+            // El SP que me diste inicialmente lo hacía:
+            // UPDATE Usuario u SET ..., u.fotoAvatar = avatar, ... WHERE u.idUsuario = idUsuario;
             $sql = "CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
 
             if ($stmt === false) {
-                // Loguear o manejar el error de preparación
                 error_log("Error en la preparación de spUpdateUsuario: " . $this->conn->error);
                 return false;
             }
@@ -130,31 +180,32 @@ class UsuarioDAO
                 $nombres,
                 $paterno,
                 $materno,
-                $fotoAvatar,
+                $fotoAvatar, // Este es el nombre del archivo de la imagen
                 $fechaNacimiento
             );
 
             if ($stmt->execute()) {
-                // Verificar si alguna fila fue afectada para confirmar la actualización
-                if ($stmt->affected_rows > 0) {
-                    $stmt->close();
-                    return true;
-                } else {
-                    // No se actualizó ninguna fila, puede que el ID no exista o los datos sean los mismos
-                    $stmt->close();
-                    return false; // O true si consideras que no es un error si no hay cambios
+                // Consideramos éxito si la ejecución fue correcta,
+                // sin importar affected_rows, ya que la subida de la imagen
+                // y la actualización del nombre del avatar son el objetivo principal
+                // cuando solo cambia la imagen.
+                $stmt->close();
+                // Limpiar cualquier resultado múltiple pendiente si el SP los genera
+                while ($this->conn->more_results() && $this->conn->next_result()) {
+                    // Descartar resultados adicionales
                 }
+                return true;
             } else {
-                // Loguear o manejar el error de ejecución
                 error_log("Error en la ejecución de spUpdateUsuario: " . $stmt->error);
                 $stmt->close();
                 return false;
             }
         } catch (mysqli_sql_exception $e) {
-            error_log("Error en actualizarUsuario: " . $e->getMessage());
+            error_log("Excepción en actualizarUsuario: " . $e->getMessage());
             return false;
         }
-        //return false; // Por si algo más falla
+        // Asegurarse de que siempre se retorne un booleano en caso de flujos inesperados
+        //return false;
     }
 
     public function validarCorreo($email): bool

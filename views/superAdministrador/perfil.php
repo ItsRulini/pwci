@@ -34,16 +34,6 @@ if (isset($_GET['error'])) {
     <link rel="stylesheet" href="perfil.css">
 </head>
 <body>
-    <?php if ($successMessage): ?>
-        <div style="color: green; text-align: center; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
-            <?php echo $successMessage; ?>
-        </div>
-    <?php endif; ?>
-    <?php if ($errorMessage): ?>
-        <div style="color: red; text-align: center; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 15px;">
-            <?php echo $errorMessage; ?>
-        </div>
-    <?php endif; ?>
 
     <nav class="navbar">
         <a href="main.php" class="logo-link">
@@ -57,6 +47,17 @@ if (isset($_GET['error'])) {
         </ul>
     </nav>
 
+    <?php if ($successMessage): ?>
+        <div style="color: green; text-align: center; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
+            <?php echo $successMessage; ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($errorMessage): ?>
+        <div style="color: red; text-align: center; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 15px;">
+            <?php echo $errorMessage; ?>
+        </div>
+    <?php endif; ?>
+
     <section>
         <div class="infoGeneral">
             <h2>Perfil de <?php echo strtolower($usuario->getRol()); ?></h2>
@@ -67,14 +68,17 @@ if (isset($_GET['error'])) {
                 <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
                 
                 <?php
-                $foto = "../../multimedia/default/default.jpg";
-                if($usuario->getFotoAvatar() != null) {
-                    $foto = "../../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
-                }
-
+                    $foto = "../../multimedia/default/default.jpg"; // Foto por defecto
+                    if ($usuario->getFotoAvatar() != null) {
+                        $rutaFotoReal = "../../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
+                        if (file_exists($rutaFotoReal)) { // Verifica si el archivo realmente existe
+                            $foto = $rutaFotoReal;
+                        }
+                    }
                 ?>
 
-                <img class="ImageLoaded" src="<?php echo $foto ?>" id="profile-image">
+                <img class="ImageLoaded" src="<?php echo htmlspecialchars($foto); ?>?t=<?php echo time(); ?>" id="profile-image" alt="Avatar">
+                
                 <label id="image" for="input-file">Elige una imagen</label>
                 <input type="file" name="avatar" accept="image/*" id="input-file">
             

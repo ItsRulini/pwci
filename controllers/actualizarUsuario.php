@@ -30,6 +30,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $fechaNacimiento = $_POST["nacimiento"];
     $fotoAvatarNombre = $_SESSION['usuario']->getFotoAvatar(); // Mantener la foto actual por defecto
 
+
+    // Redirigir de vuelta a la página de perfil con un mensaje de éxito
+    // La redirección dependerá del rol del usuario
+    $rolDirectorio = strtolower($usuarioActual->getRol()); // ej. 'administrador', 'cliente'
+
+    switch($rolDirectorio) {
+        case "superadmin": $rolDirectorio = "superAdministrador"; break;
+        case "admin": $rolDirectorio = "administrador"; break;
+        case "vendedor": $rolDirectorio = "vendedor"; break;
+        case "comprador": $rolDirectorio = "cliente"; break;
+    }
+
     // Manejo de la nueva foto de avatar si se subió una
     if (isset($_FILES["avatar"]) && $_FILES["avatar"]["error"] == 0) {
         $carpeta = "../multimedia/imagenPerfil/";
@@ -43,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!move_uploaded_file($_FILES["avatar"]["tmp_name"], $rutaCompleta)) {
             // Manejar error de subida de archivo
             // Puedes redirigir con un mensaje de error o loguearlo
-            header("Location: ../views/" . strtolower($usuarioActual->getRol()) . "/perfil.php?error=" . urlencode("Error al subir la nueva imagen."));
+            header("Location: ../views/" . $rolDirectorio . "/perfil.php?error=" . urlencode("Error al subir la nueva imagen."));
             exit();
         }
     }
@@ -70,18 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $fotoAvatarNombre, // Pasar el nombre del archivo de la foto
         $fechaNacimiento
     );
-
-
-    // Redirigir de vuelta a la página de perfil con un mensaje de éxito
-    // La redirección dependerá del rol del usuario
-    $rolDirectorio = strtolower($usuarioActual->getRol()); // ej. 'administrador', 'cliente'
-
-    switch($rolDirectorio) {
-        case "superadmin": $rolDirectorio = "superAdministrador"; break;
-        case "admin": $rolDirectorio = "administrador"; break;
-        case "vendedor": $rolDirectorio = "vendedor"; break;
-        case "comprador": $rolDirectorio = "cliente"; break;
-    }
 
     if ($actualizado) {
         // Actualizar los datos del usuario en la sesión
