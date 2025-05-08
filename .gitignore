@@ -6,3 +6,5 @@ multimedia/**/*.bmp
 multimedia/**/*.svg
 multimedia/**/*.webp
 !multimedia/imagenPerfil/.gitkeep
+!multimedia/pictures/.gitkeep
+!multimedia/videos/.gitkeep

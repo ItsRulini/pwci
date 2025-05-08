@@ -7,16 +7,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("formDashboard");
     const imagenesInput = document.getElementById("input-file");
     const videoInput = document.getElementById("input-video");
+    const categoriaSelect = document.getElementById("categoria"); // El select de categorías
+    const cathegoryCarousel = document.getElementById("cathegory-carousel"); // El carrusel de categorías
 
     // Validar que se seleccione un tipo de publicación
-    form.addEventListener("submit", function (e) {
-        const tipoSeleccionado = document.querySelector('input[name="tipo"]:checked');
-        if (!tipoSeleccionado) {
-            alert("Debes seleccionar un tipo de publicación.");
-            e.preventDefault();
-            return;
-        }
-    });
+    // form.addEventListener("submit", function (e) {
+    //     const tipoSeleccionado = document.querySelector('input[name="tipo"]:checked');
+    //     if (!tipoSeleccionado) {
+    //         alert("Debes seleccionar un tipo de publicación.");
+    //         e.preventDefault();
+    //         return;
+    //     }
+    // });
 
     // Mostrar u ocultar campos según la opción elegida (venta o cotización)
     tipoPublicacionRadios.forEach(radio => {
@@ -25,10 +27,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 precioInput.style.display = "block";
                 cantidadInput.style.display = "block";
                 disponibilidadMsg.style.display = "none";
+                precioSelectMsg.style.display = "none";
             } else {
                 precioInput.style.display = "none";
                 cantidadInput.style.display = "none";
                 disponibilidadMsg.style.display = "none";
+                precioSelectMsg.style.display = "none";
+                precioInput.value = "";
+                cantidadInput.value = "";
             }
         });
     });
@@ -56,6 +62,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Validación en el envío del formulario
     form.addEventListener("submit", function (e) {
+         // --- INICIO: Validación de Categorías ---
+         const categoriasEnCarrusel = cathegoryCarousel.querySelectorAll(".categoria-item");
+        
+         if (categoriasEnCarrusel.length === 0) {
+            alert("Debes seleccionar al menos una categoría para el producto.");
+            e.preventDefault(); // Detener el envío del formulario
+            return; // Salir de la función
+        }
+        // --- FIN: Validación de Categorías ---
+
+        const tipoSeleccionado = document.querySelector('input[name="tipo"]:checked');
+        if (!tipoSeleccionado) {
+            alert("Debes seleccionar un tipo de publicación.");
+            e.preventDefault();
+            return;
+        }
+
         // Validar imágenes
         if (imagenesInput.files.length < 3) {
             alert("Debes subir al menos 3 imágenes.");
@@ -75,16 +98,27 @@ document.addEventListener("DOMContentLoaded", function () {
         if (ventaSeleccionada) {
             if (!precioInput.value || parseFloat(precioInput.value) <= 0) {
                 alert("Debes ingresar un precio válido para venta.");
+                precioInput.focus();
                 e.preventDefault();
                 return;
             }
 
             if (!cantidadInput.value || parseInt(cantidadInput.value) <= 0) {
                 alert("Debes ingresar una cantidad válida para venta.");
+                cantidadInput.focus();
                 e.preventDefault();
                 return;
             }
         }
+
+        categoriasEnCarrusel.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.dataset.value; // El valor de la categoría
+            option.textContent = item.textContent; // El texto visible de la categoría
+            option.selected = true; // Marcar como seleccionada para que se envíe
+            categoriaSelect.appendChild(option);
+        });
+
     });
 });
 

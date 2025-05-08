@@ -61,7 +61,7 @@ $usuario = $_SESSION['usuario'];
 
                     <div id="cathegory-carousel" class="carousel"></div>
 
-                    <select id="categoria" name="categoria[]" multiple required>
+                    <select id="categoria" name="categoria[]" multiple>
                         <option value="ropa" title="descripcion">Ropa</option>
                         <option value="tecnologia" title="descripcion">Tecnología</option>
                         <option value="hogar" title="descripcion">Hogar</option>
