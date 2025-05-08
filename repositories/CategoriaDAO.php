@@ -42,6 +42,40 @@ class CategoriaDAO {
 
         return false;
     }
+
+    public function getCategorias()
+    {
+        $categorias = array();
+        try {
+            // Llamada al procedimiento almacenado
+            $sql = "CALL spGetCategorias()";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+
+            if ($resultado->num_rows > 0) {
+                while ($fila = $resultado->fetch_assoc()) {
+                    $categoria = new Categoria();
+
+                    $categoria->setIdCategoria($fila["idCategoria"]);
+                    $categoria->setNombre($fila["nombre"]);
+                    $categoria->setDescripcion($fila["descripcion"]);
+
+                    array_push($categoria, $categoria);
+                }
+            } else {
+                return null;
+            }
+            $stmt->close();
+
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error en getCategorias: " . $e->getMessage()); // Loguear el error
+            return null;
+        }
+
+        return $categorias;
+    }
+
 }
 
 
