@@ -51,9 +51,7 @@ $usuario = $_SESSION['usuario'];
                     <input type="file" accept="video/*" id="input-video" name="video">
                 </div>
 
-
                 <div class="cathegory-group">
-
                     <div class="cathegory-info">
                         <h3>Selecciona al menos una categoría</h3>
                         <div class="add-category-button" id="openCategoryModal" title="Agregar nueva categoría">+</div>
@@ -61,12 +59,10 @@ $usuario = $_SESSION['usuario'];
 
                     <div id="cathegory-carousel" class="carousel"></div>
 
+                    <div id="mensajeNoCategorias" style="color: #ffcc00; text-align: center; margin-top: 10px; display: none;"></div>
+
                     <select id="categoria" name="categoria[]" multiple>
-                        <option value="ropa" title="descripcion">Ropa</option>
-                        <option value="tecnologia" title="descripcion">Tecnología</option>
-                        <option value="hogar" title="descripcion">Hogar</option>
-                        <option value="juguetes" title="descripcion">Juguetes</option>
-                        <option value="video-juegos" title="descripcion">Video juegos</option>
+
                     </select>
                 </div>
                 
