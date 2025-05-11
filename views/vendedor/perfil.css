@@ -72,3 +72,16 @@
     background-color: #ffcc00;
     color: #333;
 }
+
+.pubs-content .pubsection{
+    margin-bottom: 15px;
+}
+
+.no-products-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+}

@@ -172,6 +172,50 @@ class ProductoDAO {
         return $productos;
     }
 
+    public function obtenerProductosPendientesVendedor($idVendedor) {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosPendientesVendedor(?)");
+            $stmt->bind_param("i", $idVendedor);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+    public function obtenerProductosAprobadosVendedor($idVendedor) {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosAprobadosVendedor(?)");
+            $stmt->bind_param("i", $idVendedor);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+    public function obtenerProductosRechazadosVendedor($idVendedor) {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosRechazadosVendedor(?)");
+            $stmt->bind_param("i", $idVendedor);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
 
 }
 
