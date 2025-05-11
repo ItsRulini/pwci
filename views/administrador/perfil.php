@@ -28,8 +28,8 @@ if (isset($_GET['error'])) {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="perfil.css">
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="perfil.css">
     <title>Document</title>
 </head>
 <body>
@@ -95,6 +95,20 @@ if (isset($_GET['error'])) {
     <div class="pubs-content">
         <section class="pubsection">
             <h2 class="section-title">Aprobadas por mí</h2>
+            <div class="card-container">
+
+                <div class="card">
+                    <img src="../../multimedia/default/default.jpg" alt="Ejemplo de producto" class="card-image">
+                    <h3 class="card-title">Nombre del producto</h3>
+                    <p class="card-description">Descripción del producto.</p>  
+                    <p class="card-price">$100 MXN</p>
+                    <button class="card-button-ver-mas">Ver más</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="pubsection">
+            <h2 class="section-title">Rechazadas por mí</h2>
             <div class="card-container">
 
                 <div class="card">

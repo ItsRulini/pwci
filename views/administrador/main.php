@@ -38,16 +38,7 @@ $usuario = $_SESSION['usuario'];
         <section class="pubsection">
             <h2 class="section-title">Publicaciones</h2>
             <div class="card-container">
-
-                <div class="card">
-                    <img src="../../multimedia/default/default.jpg" alt="Ejemplo de producto" class="card-image">
-                    <h3 class="card-title">Nombre del producto</h3>
-                    <p class="card-description">Descripción del producto.</p>  
-                    <p class="card-price">$100 MXN</p>
-                    <button class="card-button-ver-mas">Ver más</button>
-                    <button class="card-button-approve"><i class="fas fa-check"></i></button>
-                    <button class="card-button-disapprove"><i class="fas fa-times"></i></button>
-                </div>
+                
             </div>
         </section>
     </main>

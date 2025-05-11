@@ -3,12 +3,20 @@ require_once '../../models/Usuario.php';
 
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
+    header("Location: ../index.php");
     exit();
 }
 
 $usuario = $_SESSION['usuario'];
+
+if (!isset($_GET['idProducto'])) {
+    header("Location: main.php");
+    exit();
+}
+
+$idProducto = (int) $_GET['idProducto']; // 👈
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -66,9 +74,8 @@ $usuario = $_SESSION['usuario'];
                 <p>Descripción del producto</p>
 
                 <div class="buttons">
-                    <button class="card-button-approve"><i class="fas fa-check"></i></button>
-                    <button class="card-button-disapprove"><i class="fas fa-times"></i></button>
-
+                    <button class="card-button-approve" onclick="autorizarProducto(<?php echo $idProducto; ?>)"><i class="fas fa-check"></i></button>
+                    <button class="card-button-disapprove" onclick="rechazarProducto(<?php echo $idProducto; ?>)"><i class="fas fa-times"></i></button>
                 </div>
             </div>
 
@@ -78,5 +85,6 @@ $usuario = $_SESSION['usuario'];
         </section>
     </main>
     
+    <script src="producto.js"></script>
 </body>
 </html>
