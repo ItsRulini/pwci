@@ -5,6 +5,7 @@ multimedia/**/*.gif
 multimedia/**/*.bmp
 multimedia/**/*.svg
 multimedia/**/*.webp
+multimedia/**/*.mp4
 !multimedia/imagenPerfil/.gitkeep
 !multimedia/pictures/.gitkeep
 !multimedia/videos/.gitkeep
