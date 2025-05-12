@@ -217,6 +217,65 @@ class ProductoDAO {
         return $productos;
     }
 
+    public function getProductosPopulares() {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosPopulares()");
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+    public function getProductosCotizacion() {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosCotizacion()");
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+    public function getProductosRecientes() {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosRecientes()");
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+    public function getProductosGenerales() {
+        $productos = [];
+        try {
+            $stmt = $this->conn->prepare("CALL spGetProductosGenerales()");
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            while ($fila = $resultado->fetch_assoc()) {
+                $productos[] = $fila;
+            }
+            $stmt->close();
+        } catch (Exception $e) {}
+        return $productos;
+    }
+
+
+
+
 }
 
 ?>

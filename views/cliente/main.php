@@ -123,8 +123,30 @@ $usuario = $_SESSION['usuario'];
             </ol>
         </div>
 
+        <div id="General">
+            <h2>Más productos</h2>
+            <ol id="ListaProductos">
+                <li class="producto">
+                    <img src="../../multimedia/default/default.jpg" alt="Producto 2">
+                    <div class="info">
+                        <a href="producto.php">Nombre del producto</a>
+                        <p>$120 MXN</p>
+                        <button>Añadir al carrito</button>
+                    </div>
+                </li>
+                <li class="producto">
+                    <img src="../../multimedia/default/default.jpg" alt="Producto 2">
+                    <div class="info">
+                        <a href="producto.php">Nombre del producto</a>
+                        <p>$120 MXN</p>
+                        <button>Añadir al carrito</button>
+                    </div>
+                </li>
+            </ol>
+        </div>
+
     </section>
         
-        
+    <script src="main.js"></script>
 </body>
 </html>

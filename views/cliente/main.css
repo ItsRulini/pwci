@@ -8,7 +8,7 @@
 }
 
 /* Estilo de los contenedores de productos */
-#Populares, #Recientes, #ParaCotizar {
+#Populares, #Recientes, #ParaCotizar, #General {
     background: #444;
     padding: 20px;
     margin-top: 25px;
@@ -22,7 +22,7 @@ h2 {
     color: white;
 }
 
-#ListaPopulares, #ListaRecientes, #ListaCotizacion{
+#ListaPopulares, #ListaRecientes, #ListaCotizacion, #ListaProductos{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
@@ -89,12 +89,12 @@ button:hover {
         align-items: center;
     }
 
-    #Populares, #Recientes, #ParaCotizar {
+    #Populares, #Recientes, #ParaCotizar, #General {
         width: 90%;
         margin-bottom: 20px;
     }
     
-    #ListaPopulares, #ListaRecientes, #ListaCotizacion {
+    #ListaPopulares, #ListaRecientes, #ListaCotizacion, #ListaProductos {
         grid-template-columns: repeat(2, 1fr);
     }
     .producto {
