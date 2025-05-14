@@ -1,15 +1,18 @@
 <?php
 require_once '../connection/conexion.php';
-require_once '../models/Producto.php';
 require_once '../repositories/ProductoDAO.php';
 
+header('Content-Type: application/json');
 
-if($_SERVER["REQUEST_METHOD"] === "GET"){
-    $nombre = $_GET["query"];
-    // $productoDAO = new ProductoDAO($conn);
-    // $productos = $productoDAO->buscarProducto($nombre);
-    $productos = "producto encontrado";
+    $texto = $_GET['query'] ?? '';
+
+    if (trim($texto) === '') {
+        echo json_encode([]);
+        exit();
+    }
+
+    $dao = new ProductoDAO($conn);
+    $productos = $dao->buscarProductosCliente($texto);
+
     echo json_encode($productos);
-}
-
 ?>

@@ -158,6 +158,6 @@ $usuario = $_SESSION['usuario'];
 
     <script src="https://www.paypal.com/sdk/js?client-id=Adxi5Pt83dliN05vencduR0nFE9NnQtbHJTl6AG7-aaUCJRA63cJjlcFWJxvTcwk45QVZQ-ON0WWXgVw&currency=MXN"></script>
     <script src="carrito.js"></script>
-
+    <script src="buscador.js"></script>
 </body>
 </html>

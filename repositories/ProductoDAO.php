@@ -274,6 +274,20 @@ class ProductoDAO {
     }
 
 
+    public function buscarProductosCliente($textoBusqueda) {
+        $stmt = $this->conn->prepare("CALL spBuscarProductosCliente(?)");
+        $stmt->bind_param("s", $textoBusqueda);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        $productos = [];
+        while ($row = $resultado->fetch_assoc()) {
+            $productos[] = $row;
+        }
+
+        $stmt->close();
+        return $productos;
+    }
 
 
 }

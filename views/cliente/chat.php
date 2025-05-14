@@ -172,5 +172,6 @@ $usuario = $_SESSION['usuario'];
         </section>
     </div>
 
+    <script src="buscador.js"></script>
 </body>
 </html>

@@ -1,13 +1,6 @@
 <?php
-require_once '../../models/Usuario.php';
-
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
-    exit();
-}
-
-$usuario = $_SESSION['usuario'];
+require_once '../../auth/auth.php';
+requireRole(['Vendedor']); // Solo permite a comprador
 ?>
 
 <!DOCTYPE html>

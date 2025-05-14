@@ -166,5 +166,6 @@ $usuario = $_SESSION['usuario'];
 
     </main>
     <script src="compra.js"></script>
+    <script src="buscador.js"></script>
 </body>
 </html>

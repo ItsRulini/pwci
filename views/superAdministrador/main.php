@@ -1,14 +1,6 @@
 <?php
-require_once '../../models/Usuario.php';
-
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
-    exit();
-}
-
-$usuario = $_SESSION['usuario'];
-//$usuarios = $_SESSION['usuarios']; // Obtener la lista de usuarios desde la sesión
+require_once '../../auth/auth.php';
+requireRole(['SuperAdmin']); // Solo permite a comprador
 ?>
 
 

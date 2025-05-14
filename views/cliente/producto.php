@@ -135,6 +135,6 @@ $usuario = $_SESSION['usuario'];
     </div>
 
     <script src="producto.js"></script>
-    
+    <script src="buscador.js"></script>
 </body>
 </html>

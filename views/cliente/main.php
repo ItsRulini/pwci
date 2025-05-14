@@ -1,15 +1,8 @@
 <?php
-require_once '../../models/Usuario.php';
+require_once '../../auth/auth.php';
+requireRole(['Comprador']); // Solo permite a comprador
 
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
-    exit();
-}
-
-$usuario = $_SESSION['usuario'];
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -148,5 +141,6 @@ $usuario = $_SESSION['usuario'];
     </section>
         
     <script src="main.js"></script>
+    <script src="buscador.js"></script>
 </body>
 </html>
