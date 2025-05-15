@@ -289,6 +289,21 @@ class ProductoDAO {
         return $productos;
     }
 
+    public function buscarProductosFiltrados($query, $categoria, $precioMin, $precioMax) {
+        $stmt = $this->conn->prepare("CALL spBuscarProductosFiltrados(?, ?, ?, ?)");
+        $stmt->bind_param("ssdd", $query, $categoria, $precioMin, $precioMax);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        $productos = [];
+        while ($row = $resultado->fetch_assoc()) {
+            $productos[] = $row;
+        }
+
+        $stmt->close();
+        return $productos;
+    }
+
 
 }
 

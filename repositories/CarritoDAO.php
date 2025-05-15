@@ -14,7 +14,12 @@ class CarritoDAO {
             $stmt->bind_param("ii", $idUsuario, $idProducto);
 
             if ($stmt->execute()) {
-                return ["success" => true, "message" => "Producto agregado al carrito."];
+                // Verifica si se modificó algo (evita mensaje positivo si no se insertó nada)
+                if ($stmt->affected_rows > 0) {
+                    return ["success" => true, "message" => "Producto agregado al carrito."];
+                } else {
+                    return ["success" => false, "message" => "No se agregó al carrito: ya tienes el máximo permitido en stock."];
+                }
             } else {
                 return ["success" => false, "message" => "Error al agregar producto: " . $stmt->error];
             }
@@ -22,6 +27,7 @@ class CarritoDAO {
             return ["success" => false, "message" => "Excepción: " . $e->getMessage()];
         }
     }
+
 
     public function sumarCantidad($idLista, $idProducto) {
         $stmt = $this->conn->prepare("CALL spSumarCantidadProducto(?, ?)");
