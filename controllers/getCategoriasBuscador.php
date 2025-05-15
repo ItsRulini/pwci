@@ -1,9 +1,18 @@
 <?php
 require_once '../connection/conexion.php';
-require_once '../repositories/CategoriaDAO.php';
 
 header('Content-Type: application/json');
 
-$dao = new CategoriaDAO($conn);
-echo json_encode($dao->getCategorias());
+$sql = "SELECT idCategoria, nombre, descripcion FROM Categoria";
+$result = $conn->query($sql);
+
+$categorias = [];
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $categorias[] = $row;
+    }
+}
+
+echo json_encode($categorias); // 👈 DEVOLVER ARRAY DIRECTO
 ?>
