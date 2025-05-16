@@ -91,26 +91,47 @@ function cargarProductosGenerales() {
 }
 
 
+// function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false) {
+//      const imagen = producto.imagenPrincipal 
+//          ? `../../multimedia/productos/${producto.idProducto}/${producto.imagenPrincipal}` 
+//          : '../../multimedia/default/default.jpg';
+
+//      const precio = mostrarPrecio
+//          ? `<p>$${producto.precio} MXN</p><button onclick="agregarAlCarrito(${producto.idProducto})">Añadir al carrito</button>
+// `
+//          : `<p>Negociable</p><button>Enviar mensaje</button>`;
+
+//      return `
+//          <li class="producto">
+//              <img src="${imagen}" alt="${producto.nombre}">
+//              <div class="info">
+//                  <a href="producto.php?idProducto=${producto.idProducto}">${producto.nombre}</a>
+//                  ${precio}
+//              </div>
+//          </li>
+//      `;
+//  }
+
 function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false) {
-     const imagen = producto.imagenPrincipal 
-         ? `../../multimedia/productos/${producto.idProducto}/${producto.imagenPrincipal}` 
-         : '../../multimedia/default/default.jpg';
+    const imagen = producto.imagenPrincipal
+        ? `../../multimedia/productos/${producto.idProducto}/${producto.imagenPrincipal}`
+        : '../../multimedia/default/default.jpg';
 
-     const precio = mostrarPrecio
-         ? `<p>$${producto.precio} MXN</p><button onclick="agregarAlCarrito(${producto.idProducto})">Añadir al carrito</button>
-`
-         : `<p>Negociable</p><button>Enviar mensaje</button>`;
+    const acciones = mostrarPrecio
+        ? `<p>$${producto.precio} MXN</p><button onclick="agregarAlCarrito(${producto.idProducto})">Añadir al carrito</button>`
+        : `<p>Negociable</p><button onclick="iniciarChat(${producto.idProducto})">Enviar mensaje</button>`;
 
-     return `
-         <li class="producto">
-             <img src="${imagen}" alt="${producto.nombre}">
-             <div class="info">
-                 <a href="producto.php?idProducto=${producto.idProducto}">${producto.nombre}</a>
-                 ${precio}
-             </div>
-         </li>
-     `;
- }
+    return `
+        <li class="producto">
+            <img src="${imagen}" alt="${producto.nombre}">
+            <div class="info">
+                <a href="producto.php?idProducto=${producto.idProducto}">${producto.nombre}</a>
+                ${acciones}
+            </div>
+        </li>
+    `;
+}
+
 
 
  function agregarAlCarrito(idProducto) {
@@ -132,5 +153,27 @@ function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false)
     .catch(error => {
         console.error('Error al agregar al carrito:', error);
         alert('Ocurrió un error al conectar con el servidor.');
+    });
+}
+
+function iniciarChat(idProducto) {
+    const formData = new FormData();
+    formData.append("idProducto", idProducto);
+
+    fetch("../../controllers/iniciarChat.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success && data.idChat) {
+            window.location.href = `chat.php?idChat=${data.idChat}`;
+        } else {
+            alert("No se pudo iniciar el chat.");
+        }
+    })
+    .catch(err => {
+        console.error("Error iniciando chat:", err);
+        alert("Ocurrió un error al intentar abrir el chat.");
     });
 }

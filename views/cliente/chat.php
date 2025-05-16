@@ -8,6 +8,14 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $usuario = $_SESSION['usuario'];
+
+
+$idChat = isset($_GET['idChat']) ? (int) $_GET['idChat'] : 0;
+if ($idChat <= 0) {
+    echo "<p>Error: Chat no válido.</p>";
+    exit();
+}
+
 ?>
 
 
@@ -173,5 +181,11 @@ $usuario = $_SESSION['usuario'];
     </div>
 
     <script src="buscador.js"></script>
+    <script src="../chat.js"></script>
+    <script>
+        const idChat = <?= $idChat ?>;
+        const rolUsuario = "<?= $usuario->getRol() ?>"; // 'Comprador' o 'Vendedor'
+    </script>
+
 </body>
 </html>
