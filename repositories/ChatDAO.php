@@ -1,4 +1,6 @@
 <?php
+// repositories/ChatDAO.php
+
 class ChatDAO {
     private $conn;
 
@@ -6,43 +8,122 @@ class ChatDAO {
         $this->conn = $conexion;
     }
 
+    public function obtenerConversacionesUsuario($idUsuarioActual) {
+        $conversaciones = [];
+        $stmt = $this->conn->prepare("CALL spObtenerConversacionesUsuario(?)");
+        if (!$stmt) {
+            error_log("ChatDAO::obtenerConversacionesUsuario - Error en prepare: " . $this->conn->error);
+            return $conversaciones;
+        }
+        $stmt->bind_param("i", $idUsuarioActual);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        while ($row = $resultado->fetch_assoc()) {
+            $conversaciones[] = $row;
+        }
+        $stmt->close();
+        // Limpiar resultados
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) {
+                $res->free();
+            }
+        }
+        return $conversaciones;
+    }
+    
     public function insertarMensaje($tipo, $mensaje, $idRemitente, $idChat) {
-        $stmt = $this->conn->prepare("CALL spInsertarMensaje(?, ?, ?, ?, @idMensaje)");
+        $outParamName = "@idNewMensaje_" . uniqid();
+        $stmt = $this->conn->prepare("CALL spInsertarMensaje(?, ?, ?, ?, {$outParamName})");
+        if (!$stmt) {
+            error_log("ChatDAO::insertarMensaje - Error en prepare: " . $this->conn->error);
+            return null;
+        }
         $stmt->bind_param("ssii", $tipo, $mensaje, $idRemitente, $idChat);
-        if ($stmt->execute()) {
-            $result = $this->conn->query("SELECT @idMensaje AS idMensaje");
-            $row = $result->fetch_assoc();
-            return $row['idMensaje'] ?? null;
+        
+        $executeSuccess = $stmt->execute();
+        $stmt->close();
+
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) {
+                $res->free();
+            }
+        }
+
+        if ($executeSuccess) {
+            $result = $this->conn->query("SELECT {$outParamName} AS idMensaje");
+            if ($result && $row = $result->fetch_assoc()) {
+                $idMensajeCreado = $row['idMensaje'];
+                $result->free();
+                 while ($this->conn->more_results() && $this->conn->next_result()) { // Limpieza final
+                    if ($res = $this->conn->store_result()) {
+                        $res->free();
+                    }
+                }
+                return $idMensajeCreado;
+            } else {
+                error_log("ChatDAO::insertarMensaje - Error al obtener {$outParamName}: " . $this->conn->error);
+            }
+        } else {
+             error_log("ChatDAO::insertarMensaje - Error al ejecutar spInsertarMensaje.");
         }
         return null;
     }
 
     public function insertarOferta($idMensaje, $precio) {
         $stmt = $this->conn->prepare("CALL spInsertarOferta(?, ?)");
-        $stmt->bind_param("id", $idMensaje, $precio);
-        $stmt->execute();
+        if (!$stmt) {
+            error_log("ChatDAO::insertarOferta - Error en prepare: " . $this->conn->error);
+            return false;
+        }
+        // El SP spInsertarOferta espera (idMensaje, precio)
+        // El tipo para precio debe ser 'd' (double)
+        $stmt->bind_param("id", $idMensaje, $precio); 
+        $success = $stmt->execute();
+        if (!$success) {
+            error_log("ChatDAO::insertarOferta - Error al ejecutar: " . $stmt->error);
+        }
         $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) {
+                $res->free();
+            }
+        }
+        return $success;
     }
 
-    public function obtenerMensajesDeChat($idChat) {
+    public function obtenerMensajesDeChat($idChat, $idUsuarioActual) {
+        $mensajes = [];
         $stmt = $this->conn->prepare("CALL spObtenerMensajesDeChat(?)");
+        if (!$stmt) {
+            error_log("ChatDAO::obtenerMensajesDeChat - Error en prepare: " . $this->conn->error);
+            return ['mensajes' => [], 'idUsuarioActual' => $idUsuarioActual];
+        }
         $stmt->bind_param("i", $idChat);
         $stmt->execute();
         $resultado = $stmt->get_result();
 
-        $mensajes = [];
         while ($row = $resultado->fetch_assoc()) {
+            // Determinar si el mensaje es del usuario actual
+            $row['esMio'] = ($row['idRemitente'] == $idUsuarioActual);
+            // Formatear hora (ejemplo simple, puedes usar DateTime para más control)
+            $row['hora'] = date("H:i", strtotime($row['fechaEnvio']));
             $mensajes[] = $row;
         }
-
         $stmt->close();
-        return $mensajes;
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) {
+                $res->free();
+            }
+        }
+        // Devolvemos los mensajes y el idUsuarioActual para que el JS lo use
+        return ['mensajes' => $mensajes, 'idUsuarioActual' => $idUsuarioActual];
     }
 
+    // ... (tus métodos buscarChatExistente, crearChat, agregarUsuarioAlChat permanecen igual que en la respuesta anterior) ...
     public function buscarChatExistente($idUsuarioComprador, $idProducto) {
         $idChat = null;
         
-        // Primero, obtenemos el idVendedor del producto.
         $idVendedor = null;
         $stmtVendedor = $this->conn->prepare("SELECT idVendedor FROM Producto WHERE idProducto = ?");
         if (!$stmtVendedor) {
@@ -56,7 +137,6 @@ class ChatDAO {
             $idVendedor = $rowVendedor['idVendedor'];
         }
         $stmtVendedor->close();
-        // Limpiar resultados de la consulta del vendedor
         while ($this->conn->more_results() && $this->conn->next_result()) {
             if ($res = $this->conn->store_result()) {
                 $res->free();
@@ -65,11 +145,9 @@ class ChatDAO {
 
         if (!$idVendedor) {
             error_log("ChatDAO::buscarChatExistente - No se encontró vendedor para el producto ID: " . $idProducto);
-            return null; // No se puede buscar chat si no hay vendedor
+            return null; 
         }
 
-        // Ahora buscamos el chat que involucre al producto, al comprador y al vendedor.
-        // Un chat es único para un producto y la pareja comprador-vendedor.
         $stmt = $this->conn->prepare(
             "SELECT c.idChat 
              FROM Chat c
@@ -94,7 +172,6 @@ class ChatDAO {
         
         $stmt->close();
         
-        // Limpiar resultados de la búsqueda del chat
         while ($this->conn->more_results() && $this->conn->next_result()) {
             if ($res_chat = $this->conn->store_result()) {
                 $res_chat->free();
@@ -103,14 +180,7 @@ class ChatDAO {
         return $idChat;
     }
 
-    /**
-     * Crea un nuevo chat para un producto y devuelve su ID.
-     *
-     * @param int $idProducto El ID del producto.
-     * @return int|null El ID del chat creado, o null si falla.
-     */
     public function crearChat($idProducto) {
-        // Usar un nombre de variable de sesión único para el parámetro OUT
         $outParamName = "@idNewChat_" . uniqid(); 
 
         $stmt = $this->conn->prepare("CALL spCrearChat(?, " . $outParamName . ")");
@@ -122,7 +192,6 @@ class ChatDAO {
         $stmt->execute();
         $stmt->close();
 
-        // Limpiar resultados DESPUÉS de CALL y ANTES de SELECT @variable
         while ($this->conn->more_results() && $this->conn->next_result()) {
             if ($result_set = $this->conn->store_result()) {
                 $result_set->free();
@@ -138,7 +207,6 @@ class ChatDAO {
         $idChatCreado = isset($row['idChat']) ? (int)$row['idChat'] : null;
         $result->free();
 
-        // Limpiar cualquier otro posible resultado (aunque después de un SELECT simple, no debería haber más)
         while ($this->conn->more_results() && $this->conn->next_result()) {
             if ($res_extra = $this->conn->store_result()) {
                 $res_extra->free();
@@ -148,20 +216,10 @@ class ChatDAO {
         return $idChatCreado;
     }
 
-    /**
-     * Agrega un usuario a un chat existente.
-     * Usa INSERT IGNORE, por lo que no falla si el usuario ya está en el chat.
-     *
-     * @param int $idChat El ID del chat.
-     * @param int $idUsuario El ID del usuario a agregar.
-     * @return bool True si la ejecución fue exitosa (no necesariamente si se insertó una nueva fila).
-     */
     public function agregarUsuarioAlChat($idChat, $idUsuario) {
         $stmt = $this->conn->prepare("CALL spAgregarUsuarioChat(?, ?)");
         
         if (!$stmt) {
-            // El error que reportaste ("Error en prepare: Commands out of sync...")
-            // Si ocurre aquí, significa que la operación ANTERIOR a esta llamada no limpió sus resultados.
             error_log("ChatDAO::agregarUsuarioAlChat - Error en prepare spAgregarUsuarioChat: " . $this->conn->error . " (ChatID: $idChat, UsuarioID: $idUsuario)");
             return false;
         }
@@ -175,7 +233,6 @@ class ChatDAO {
         
         $stmt->close();
 
-        // Limpiar resultados después de CALL
         while ($this->conn->more_results() && $this->conn->next_result()) {
             if ($result_set = $this->conn->store_result()) {
                 $result_set->free();
@@ -183,7 +240,5 @@ class ChatDAO {
         }
         return $resultado;
     }
-
 }
-
 ?>

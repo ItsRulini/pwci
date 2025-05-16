@@ -1,18 +1,27 @@
 <?php
-require_once '../../models/Usuario.php';
+require_once '../../models/Usuario.php'; // Ajusta la ruta si es necesario
+require_once '../../auth/auth.php'; // Para la función requireRole y $usuario
 
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
-    exit();
-}
+// session_start() ya está en auth.php
+// $usuario ya está definido en auth.php
 
-$usuario = $_SESSION['usuario'];
+// El rol se obtiene de $usuario->getRol()
+$rolUsuario = $usuario->getRol();
+$idUsuarioActual = $usuario->getIdUsuario();
 
-$idChat = isset($_GET['idChat']) ? (int) $_GET['idChat'] : 0;
-if ($idChat <= 0) {
-    echo "<p>Error: Chat no válido.</p>";
-    exit();
+// Ya no es obligatorio un idChat en la URL, pero si viene, lo usamos para seleccionar el chat activo.
+$idChatActivoPorUrl = isset($_GET['idChat']) ? (int)$_GET['idChat'] : 0;
+
+// Determinar la ruta base para enlaces según el rol
+$rutaBaseRol = '';
+if ($rolUsuario === 'Comprador') {
+    $rutaBaseRol = '../cliente/';
+} elseif ($rolUsuario === 'Vendedor') {
+    $rutaBaseRol = '../vendedor/';
+} else {
+    // Manejar otros roles o error si es necesario
+    // Por ahora, podría redirigir o mostrar un error genérico.
+    // Para este ejemplo, asumimos que solo son Comprador o Vendedor.
 }
 
 ?>
@@ -22,177 +31,116 @@ if ($idChat <= 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chats</title>
+    <title>Mis Conversaciones</title>
 
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="chat.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../style.css"> <link rel="stylesheet" href="chat.css">   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     
-    <!-- Navbar -->
     <nav class="navbar">
-        <a href="main.php" class="logo-link">
+        <a href="<?php echo $rutaBaseRol; ?>main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
         </a>
+        
+        <?php if ($rolUsuario === 'Comprador'): ?>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Buscar productos...">
+            <span class="search-icon"><i class="fas fa-search"></i></span>
+        </div>
+        <?php endif; ?>
 
         <ul class="nav-links">
-            <li><a href="perfil.php">Perfil</a></li>
-            <li><a href="chat.php">Chat</a></li>
-            <li><a href="ventas.php">Ventas</a></li>
+            <?php if ($rolUsuario === 'Comprador'): ?>
+                <li><a href="<?php echo $rutaBaseRol; ?>social.php">Social</a></li>
+                <li><a href="<?php echo $rutaBaseRol; ?>compra.php">Compras</a></li>
+            <?php elseif ($rolUsuario === 'Vendedor'): ?>
+                <li><a href="<?php echo $rutaBaseRol; ?>ventas.php">Ventas</a></li>
+            <?php endif; ?>
+            <li><a href="<?php echo $rutaBaseRol; ?>perfil.php">Perfil</a></li>
+            <li><a href="<?php echo $rutaBaseRol; ?>chat.php">Chat</a></li>
+            <?php if ($rolUsuario === 'Comprador'): ?>
+            <li>
+                <a href="<?php echo $rutaBaseRol; ?>carrito.php">
+                    <i class="fas fa-shopping-cart" style="color: #ffcc00; font-size: 20px;"></i>
+                </a>
+            </li>
+            <?php endif; ?>
             <li><a href="../logout.php">Cerrar sesión</a></li>
         </ul>
     </nav>
 
     <div class="chat-layout">
-        <!-- Lista de chats -->
-        <aside id="chats_container">
+        <aside id="chats_container_aside">
             <div class="chat-list-header">
                 <h2>Conversaciones</h2>
             </div>
             
             <div class="chat-search">
-                <input type="text" placeholder="Buscar conversaciones...">
+                <input type="text" id="buscarConversacionesInput" placeholder="Buscar conversaciones...">
                 <i class="fas fa-search"></i>
             </div>
             
-            <ul class="chat-list">
-                <li class="chat-item active">
-                    <div class="chat-avatar">
-                        <img src="../../multimedia/default/default.jpg" alt="Usuario 1">
-                        <span class="status online"></span>
-                    </div>
-                    <div class="chat-info">
-                        <h3>Usuario 1</h3>
-                        <p>Siii porfavor, entregas en el metro de Simón Bolivar?</p>
-                    </div>
-                    <div class="chat-meta">
-                        <span class="time">12:30</span>
-                    </div>
-                </li>
-                
-                <li class="chat-item">
-                    <div class="chat-avatar">
-                        <img src="../../multimedia/default/default.jpg" alt="Usuario 2">
-                        <span class="status offline"></span>
-                    </div>
-                    <div class="chat-info">
-                        <h3>Usuario 2</h3>
-                        <p>Gracias por la información!</p>
-                    </div>
-                    <div class="chat-meta">
-                        <span class="time">Ayer</span>
-                    </div>
-                </li>
-                
-                <li class="chat-item">
-                    <div class="chat-avatar">
-                        <img src="../../multimedia/default/default.jpg" alt="Usuario 3">
-                        <span class="status online"></span>
-                    </div>
-                    <div class="chat-info">
-                        <h3>Usuario 3</h3>
-                        <p>¿Cuánto cuesta el envío?</p>
-                    </div>
-                    <div class="chat-meta">
-                        <span class="time">Lun</span>
-                    </div>
-                </li>
+            <ul class="chat-list" id="chatListUl">
+                <li class="chat-item-placeholder" style="display: none; text-align: center; padding: 20px; color: #ccc;">Cargando conversaciones...</li>
             </ul>
         </aside>
 
-        <!-- Conversación actual -->
-        <section id="chat_container">
-            <div class="chat-header">
+        <section id="chat_actual_section">
+            <div class="chat-header" id="chatHeaderDiv">
                 <div class="chat-user-info">
-                    <img src="../../multimedia/default/default.jpg" alt="Usuario 1">
+                    <img src="../../multimedia/default/default.jpg" alt="Usuario" id="chatHeaderAvatar">
                     <div>
-                        <a href="perfil.php" target="_blank"><h3>Usuario 1</h3></a>
+                        <h3 id="chatHeaderNombreUsuario">Selecciona un chat</h3>
+                        <span id="chatHeaderProducto" style="font-size: 0.8em; color: #ccc;"></span>
                     </div>
                 </div>
-                
             </div>
             
-            <div id="chat" class="chat-messages">
-                <div class="message-date">
-                    <span>Hoy</span>
+            <div id="chatMessagesContainer" class="chat-messages">
+                <div class="message-placeholder" style="text-align: center; padding: 50px; color: #aaa;">
+                    Selecciona una conversación para ver los mensajes.
                 </div>
-                
-                <div class="message message-sent">
-                    <div class="message-content">
-                        <p>
-                            ¡Hola! me gustaría saber si aún tienen en venta el Zelda OOT
-                        </p>
-                    </div>
-                    <span class="message-time">10:17</span>
-                </div>
-                
-                <div class="message message-received">
-                    <div class="message-content">
-                        <p>
-                            Que onda, smn si lo tenemos. Te interesa?
-                        </p>
-                    </div>
-                    <span class="message-time">10:20</span>
-                </div>
-                
-                <div class="message message-sent">
-                    <div class="message-content">
-                        <p>
-                            Siii porfavor, entregas en el metro de Simón Bolivar?
-                        </p>
-                    </div>
-                    <span class="message-time">10:22</span>
-                </div>
-
-                <div class="message message-sent">
-                    <div class="offer-content">
-                        
-                        <span>Precio: $100 MXN</span>
-                        <p>
-                            Descripción: El juego está en perfecto estado, sin rayones ni fallas. Incluye caja y manual.
-                        </p>
-                        <button class="button-cancel"><i class="fas fa-times"></i></button>
-                    </div>
-                    <span class="message-time">10:25</span>
-                </div>
-
             </div>
 
-            <div id="inputMensaje" class="message-input">
-                <input type="text" id="mensaje" placeholder="Escribe un mensaje...">
-
-                <button title="Hacer una oferta" class="offer-btn"><i class="fa-solid fa-envelope"></i></button>
-                <button title="Enviar mensaje" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            <div id="inputMensajeDiv" class="message-input" style="display: none;"> <input type="text" id="mensajeInput" placeholder="Escribe un mensaje...">
+                
+                <?php if ($rolUsuario === 'Vendedor'): ?>
+                <button title="Hacer una oferta" class="offer-btn" id="offerBtn"><i class="fa-solid fa-envelope"></i></button>
+                <?php endif; ?>
+                
+                <button title="Enviar mensaje" class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </section>
     </div>
 
-    <!-- Overlay y el Popup -->
+    <?php if ($rolUsuario === 'Vendedor'): ?>
     <div class="popup-overlay" id="popupOverlay"></div>
-    <div class="oferta-container" style="display: none;">
+    <div class="oferta-container" id="ofertaContainerDiv" style="display: none;">
         <div class="oferta-header">
             <h2>Hacer una oferta</h2>
-            <button class="close-btn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeOfferPopupBtn"><i class="fas fa-times"></i></button>
         </div>
         
-        <form id="oferta-form" action="#" method="POST">
-            <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" required>
+        <form id="oferta-form">
+            <label for="ofertaPrecioInput">Precio:</label>
+            <input type="number" step="0.01" id="ofertaPrecioInput" name="precio" required>
 
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+            <label for="ofertaDescripcionInput">Descripción:</label>
+            <textarea id="ofertaDescripcionInput" name="descripcion" rows="4" required></textarea>
 
-            <button title="Enviar mensaje" class="send-btn">Enviar oferta</i></button>
+            <button type="submit" class="send-btn">Enviar oferta</button>
         </form>
-
     </div>
+    <?php endif; ?>
 
-    <script src="../chat.js"></script>
     <script>
-        const idChat = <?= $idChat ?>;
-        const rolUsuario = "<?= $usuario->getRol() ?>"; // 'Comprador' o 'Vendedor'
+        // Pasar variables PHP a JavaScript de forma segura
+        const ID_USUARIO_ACTUAL = <?php echo json_encode($idUsuarioActual); ?>;
+        const ROL_USUARIO_ACTUAL = <?php echo json_encode($rolUsuario); ?>;
+        const ID_CHAT_ACTIVO_URL = <?php echo json_encode($idChatActivoPorUrl); ?>;
     </script>
+    <script src="../chat.js"></script> <?php if ($rolUsuario === 'Comprador'): ?>
+        <script src="buscador.js"></script> <?php endif; ?>
 
 </body>
 </html>
