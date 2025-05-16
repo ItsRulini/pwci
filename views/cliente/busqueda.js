@@ -87,10 +87,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-    window.enviarMensaje = function (idProducto) {
-        // Futuro: redirigir a chat o abrir modal
-        alert(`Funcionalidad de chat en desarrollo para el producto ${idProducto}.`);
-    };
+    // window.enviarMensaje = function (idProducto) {
+    //     // Futuro: redirigir a chat o abrir modal
+    //     alert(`Funcionalidad de chat en desarrollo para el producto ${idProducto}.`);
+    // };
 });
 
 function cargarCategorias() {
@@ -111,6 +111,29 @@ function cargarCategorias() {
             console.error("Error cargando categorías:", err);
         });
 }
+
+function enviarMensaje(idProducto) {
+    const formData = new FormData();
+    formData.append("idProducto", idProducto);
+
+    fetch("../../controllers/iniciarChat.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success && data.idChat) {
+            window.location.href = `chat.php?idChat=${data.idChat}`;
+        } else {
+            alert("No se pudo iniciar el chat.");
+        }
+    })
+    .catch(err => {
+        console.error("Error iniciando chat:", err);
+        alert("Ocurrió un error al intentar abrir el chat.");
+    });
+}
+
 
 // Cargar al inicio
 document.addEventListener("DOMContentLoaded", cargarCategorias);
