@@ -1,13 +1,13 @@
 <?php
-require_once '../../models/Usuario.php';
+require_once '../../models/Usuario.php'; // Ajusta la ruta si es necesario
 
-session_start();
+session_start(); 
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
+    header("Location: ../index.php"); 
     exit();
 }
 
-$usuario = $_SESSION['usuario'];
+$idProductoFromUrl = isset($_GET['idProducto']) ? (int)$_GET['idProducto'] : 0;
 ?>
 
 <!DOCTYPE html>
@@ -18,13 +18,11 @@ $usuario = $_SESSION['usuario'];
         <title>Producto</title>
     
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
         <link rel="stylesheet" href="../style.css">
-        <link rel="stylesheet" href="producto.css">
+        <link rel="stylesheet" href="producto.css"> 
     </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
@@ -50,46 +48,30 @@ $usuario = $_SESSION['usuario'];
     </nav>
 
     <main>
-        <section class="producto">
-            <!--Categorias a las que pertenece el producto-->
-            <ul class="categorias">
-                <li class="categoria">Categoria 1</li>
-                <li class="categoria">Categoria 2</li>
-                <li class="categoria">Categoria 3</li>
-                <li class="categoria">Categoria 4</li>
-                <li class="categoria">Categoria 5</li>
-                <li class="categoria">Categoria 6</li>
+        <section class="producto" id="seccionProductoDetalle"> 
+            <ul class="categorias" id="productoCategoriasUl">
+                <li class="categoria">Cargando...</li>
             </ul>
-
-            <!--Info general del producto-->
             
-            <div class="multimedia">
-                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
-                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
-                <img src="../../multimedia/default/default.jpg" alt="Producto 1">
-
-                <video controls>
-                    <source src="../../multimedia/default/video.mp4" type="video/mp4">
-                </video>
+            <div class="multimedia" id="productoMultimediaDiv">
+                <img src="../../multimedia/default/default.jpg" alt="Cargando multimedia...">
             </div>
 
-            <div class="info">
-                <i class="fas fa-ellipsis-v"></i> <!--Icono para opcion de agregar a una wishlist-->
-                <h2>Nombre del producto</h2>
-                <p>$150 MXN</p>
-                <p>Descripción del producto</p>
-                <button id="ola">Añadir al carrito</button>
+            <div class="info" id="productoInfoDiv">
+                
+                <i class="fas fa-ellipsis-v" id="btnAbrirPopupWishlist" title="Agregar a Wishlist"></i>
+                
+                <h2>Cargando nombre...</h2>
+                <p>Cargando precio...</p> 
+                <p>Cargando descripción...</p>
+                <button id="btnAccionProducto" class="btn-placeholder-accion">Cargando...</button>
             </div>
         </section>
 
-        <section class="calificacion">
-            <h2>Calificación</h2>
-            <div class="estrellas" id="estrellas">
-                <i class="fas fa-star" data-index="1"></i>
-                <i class="fas fa-star" data-index="2"></i>
-                <i class="fas fa-star" data-index="3"></i>
-                <i class="fas fa-star" data-index="4"></i>
-                <i class="fas fa-star" data-index="5"></i>
+        <section class="calificacion" id="productoCalificacionSection">
+            <h2>Calificación Promedio</h2>
+            <div class="estrellas" id="productoEstrellasPromedio"> 
+                <span>Cargando calificación...</span>
             </div>
         </section>
     </main>
@@ -97,43 +79,26 @@ $usuario = $_SESSION['usuario'];
     <div class="comentarios-container">
         <section class="comentarios">
             <h2>Comentarios</h2>
-            <ol>
-                <li class="comentario">
-                    <img src="../../multimedia/default/default.jpg" alt="Usuario 1">
-                    <div class="info">
-                        <h3>Usuario 1</h3>
-                        <p>Comentario 1</p>
-                    </div>
-                </li>
-                <li class="comentario">
-                    <img src="../../multimedia/default/default.jpg" alt="Usuario 2">
-                    <div class="info">
-                        <h3>Usuario 2</h3>
-                        <p>Comentario 2</p>
-                    </div>
-                </li>
+            <ol id="productoListaComentariosOl">
+                <li class="comentario">Cargando comentarios...</li>
             </ol>
         </section>
     </div>
 
-    <!-- Ventana emergente -->
-    <div class="popup" id="popup">
+    <div class="popup" id="popup"> 
         <div class="popup-content">
-            <span class="close" id="btnCerrarPopup">&times;</span>
+            <span class="close" id="btnCerrarPopup">&times;</span> 
             <p>Agregar producto a wishlist</p>
-
-            <ul class="listas">
-                <li class="lista">
-                    Nombre de la lista
-                    <input type="checkbox">
-                </li>
-                
+            <ul class="listas" id="popupWishlistListasUl">
+                <!-- {/* */} -->
             </ul>
-
-            <button class="agregar">Agregar</button>
+            <button class="agregar" id="popupBtnAgregarWishlist">Agregar</button>
         </div>
     </div>
-
+    
+    <script>
+        const ID_PRODUCTO_ACTUAL = <?php echo json_encode($idProductoFromUrl); ?>;
+    </script>
     <script src="producto.js"></script>
     <script src="buscador.js"></script>
 </body>

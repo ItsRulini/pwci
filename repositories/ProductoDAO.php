@@ -304,7 +304,67 @@ class ProductoDAO {
         return $productos;
     }
 
+    public function obtenerDetallesProductoCliente($idProducto) {
+        $detalles = null;
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        $stmt = $this->conn->prepare("CALL spObtenerDetallesProductoCliente(?)");
+        if (!$stmt) {
+            error_log("ProductoDAO::obtenerDetallesProductoCliente - Error en prepare: " . $this->conn->error);
+            return null;
+        }
+        $stmt->bind_param("i", $idProducto);
+        if ($stmt->execute()) {
+            $resultado = $stmt->get_result();
+            if ($resultado) {
+                $detalles = $resultado->fetch_assoc();
+                $resultado->free();
+            }
+        } else {
+            error_log("ProductoDAO::obtenerDetallesProductoCliente - Error en execute: " . $stmt->error);
+        }
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $detalles;
+    }
 
+    /**
+     * Obtiene los comentarios para un producto específico.
+     *
+     * @param int $idProducto
+     * @return array Lista de comentarios.
+     */
+    public function obtenerComentariosDeProducto($idProducto) {
+        $comentarios = [];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        $stmt = $this->conn->prepare("CALL spObtenerComentariosDeProducto(?)");
+        if (!$stmt) {
+            error_log("ProductoDAO::obtenerComentariosDeProducto - Error en prepare: " . $this->conn->error);
+            return $comentarios;
+        }
+        $stmt->bind_param("i", $idProducto);
+        if ($stmt->execute()) {
+            $resultado = $stmt->get_result();
+            if ($resultado) {
+                while ($fila = $resultado->fetch_assoc()) {
+                    $comentarios[] = $fila;
+                }
+                $resultado->free();
+            }
+        } else {
+            error_log("ProductoDAO::obtenerComentariosDeProducto - Error en execute: " . $stmt->error);
+        }
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $comentarios;
+    }
 }
 
 ?>

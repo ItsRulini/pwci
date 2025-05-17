@@ -7,52 +7,47 @@ main {
     padding: 20px;
 }
 
-/* Estilos para las categorías */
-.categorias {
+/* Estilos para las categorías del producto en la página de detalle */
+/* Asegúrate que esta clase 'categorias' no entre en conflicto con otras si es muy genérica */
+/* En el HTML de producto.php la ul tiene id="productoCategoriasUl" y clase="categorias" */
+section.producto ul.categorias { /* Más específico */
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 columns per row */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 10px;
     padding: 10px;
-    list-style: none; /* Removes list bullets */
+    list-style: none;
     margin-bottom: 20px;
+    justify-content: center;
 }
 
-.categoria {
+section.producto ul.categorias li.categoria { /* Más específico */
     background: #ffcc00;
     padding: 10px 15px;
     border-radius: 20px;
     font-weight: bold;
     color: black;
     text-align: center;
+    transition: background 0.3s;
 }
 
-.producto {
+section.producto ul.categorias li.categoria:hover {
+    background: #e6b800;
+}
+
+/* Contenedor principal del detalle del producto */
+section.producto { /* Usado en producto.php para la sección principal */
     background-color: #333;
-    width: 75%;
+    width: 75%; /* Considera usar max-width y % para mejor responsividad */
     color: whitesmoke;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px; /* Añadido para separar de la sección de calificación */
 }
 
-/* Botón de opciones (tres puntos) */
-.producto .fa-ellipsis-v {
-    position: absolute;
-    top: 555px;
-    right: 250px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #ffff;
-    transition: color 0.3s;
-}
-
-.producto .fa-ellipsis-v:hover {
-    color: #ffcc00;
-}
-
-/* Carrusel multimedia estilo Amazon */
-.multimedia {
+/* Carrusel multimedia */
+.multimedia { /* Usado en producto.php para el div de imágenes/videos */
     display: flex;
     overflow-x: auto;
     scroll-behavior: smooth;
@@ -62,12 +57,13 @@ main {
     border-radius: 10px;
     background: #222;
     box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px; /* Espacio antes de la info */
 }
 
 .multimedia img,
 .multimedia video {
     width: 100%;
-    max-width: 300px;
+    max-width: 300px; /* El JS crea estos elementos */
     height: auto;
     border-radius: 10px;
     cursor: pointer;
@@ -79,251 +75,316 @@ main {
     transform: scale(1.05);
 }
 
-/* Estilos para las categorías */
-.categorias {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-    padding: 10px;
-    list-style: none;
-    justify-content: center;
-}
-
-.categoria {
-    background: #ffcc00;
-    padding: 10px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    color: black;
-    text-align: center;
-    transition: background 0.3s;
-}
-
-.categoria:hover {
-    background: #e6b800;
-}
-
 /* Info del producto */
-.producto .info {
+section.producto div.info { /* Usado en producto.php para el div de info */
     margin-top: 10px;
     padding: 10px;
 }
 
-.producto .info > * {
-    margin: 5px 0;
+section.producto div.info > * {
+    margin: 8px 0; /* Un poco más de espacio */
 }
 
-/* Botón Añadir al carrito */
-.producto button {
+/* Botón de acción (Añadir al carrito / Enviar mensaje) */
+section.producto div.info button, 
+button#btnAccionProducto { /* Para el botón generado por JS */
     background-color: #ffcc00;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px; /* Un poco más de padding */
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background 0.3s;
+    font-weight: bold; /* Hacerlo bold */
+    color: #333; /* Color de texto para contraste */
+    transition: background-color 0.3s;
+    display: inline-block; /* Para que no ocupe todo el ancho si no es necesario */
+    width: auto; /* Ajustar al contenido */
 }
 
-.producto button:hover {
+section.producto div.info button:hover,
+button#btnAccionProducto:hover {
     background-color: #e6b800;
 }
 
-/* Sección de calificación */
-.calificacion {
-    background-color: #333;
+
+/* Sección de calificación promedio */
+section.calificacion { /* Usado en producto.php */
+    background-color: #333; /* Mismo fondo que .producto para consistencia */
     border-radius: 10px;
     color: whitesmoke;
-    height: 150px;
-    width: 75%;
+    /* height: 150px; Puede ser auto para ajustarse al contenido */
+    padding: 20px; /* Añadido padding */
+    width: 75%; /* Misma anchura que .producto */
     text-align: center;
-    border-top: 2px solid #ffcc00;
+    /* border-top: 2px solid #ffcc00; Opcional, si quieres una línea divisoria */
+    margin-bottom: 20px; /* Espacio antes de comentarios */
 }
 
-.calificacion h2 {
-    margin-bottom: 10px;
-    padding: 20px;
+section.calificacion h2 {
+    margin-bottom: 15px; /* Ajustado */
+    /* padding: 20px; Ya no es necesario si section.calificacion tiene padding */
 }
 
-.estrellas{
-    color: #5f5b4e;
-    cursor: pointer;
-    font-size: 24px;
+/* Estilo para el contenedor de estrellas de DISPLAY (promedio) */
+/* Usando el ID que tiene en producto.php: #productoEstrellasPromedio */
+/* y la clase .estrellas que tu CSS ya define para el color base */
+#productoEstrellasPromedio {
+    color: #5f5b4e; /* Color base para estrellas vacías (gris oscuro) */
+    font-size: 24px; /* Tamaño de las estrellas */
+    /* cursor: default; No necesita ser pointer si es solo display */
 }
 
+#productoEstrellasPromedio i.fas, 
+#productoEstrellasPromedio i.far { /* Font Awesome 5 usa far para regular (vacía) */
+    margin: 0 2px; /* Pequeño espacio entre estrellas */
+}
+
+#productoEstrellasPromedio i.active { /* Clase que el JS añade a estrellas llenas/medias */
+    color: #ffcc00; /* Amarillo para estrellas activas */
+}
 
 
 /* Sección de comentarios */
 .comentarios-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Centra la sección de comentarios si es más angosta */
     flex-direction: column;
-    padding: 20px;
+    padding: 0 20px 20px 20px; /* Ajustado padding */
+    width: 100%; /* Para que ocupe el ancho disponible */
 }
 
-.comentarios {
-    width: 75%;
+section.comentarios { /* Usado en producto.php */
+    width: 75%; /* Misma anchura que .producto y .calificacion */
     background-color: #444;
     padding: 20px;
     color: whitesmoke;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-    margin-top: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+    margin-top: 0; /* Ya hay margen en .calificacion */
 }
 
-.comentarios h2 {
+section.comentarios h2 {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Más espacio */
 }
 
-.comentarios ol {
+section.comentarios ol {
     list-style: none;
+    padding: 0; /* Quitar padding por defecto de ol */
 }
 
-.comentario {
+/* Cada comentario individual */
+li.comentario { /* Usado en producto.php */
     display: flex;
-    align-items: center;
+    /* align-items: center; Cambiado a flex-start para mejor alineación si el texto es largo */
+    align-items: flex-start;
     background-color: #333;
-    padding: 10px;
+    padding: 15px; /* Más padding */
     border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.1);
+    margin-bottom: 15px; /* Más espacio */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
 }
 
-.comentario img {
-    width: 50px;
-    height: 50px;
+li.comentario img {
+    width: 45px; /* Ligeramente más pequeño */
+    height: 45px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 15px; /* Más espacio */
+    flex-shrink: 0; /* Evitar que la imagen se encoja */
 }
 
-.comentario .info {
+/* div.info dentro de li.comentario */
+li.comentario div.info { 
     color: #ffffff;
+    flex-grow: 1; /* Para que ocupe el espacio restante */
 }
 
-.comentario h3 {
-    font-size: 16px;
+li.comentario div.info h3 {
+    font-size: 1em; /* Ligeramente más pequeño */
+    margin-top: 0; /* Quitar margen superior */
     margin-bottom: 5px;
+    display: flex; /* Para alinear nombre y fecha */
+    justify-content: space-between;
+    align-items: center;
+}
+small.fecha-comentario { /* Estilo para la fecha dentro del h3 */
+    font-size: 0.8em;
+    color: #bbb;
+    font-weight: normal;
 }
 
-.comentario p {
-    font-size: 14px;
-    opacity: 0.8;
+li.comentario div.info p {
+    font-size: 0.9em; /* Ligeramente más pequeño */
+    opacity: 0.9; /* Ligeramente más visible */
+    line-height: 1.5; /* Mejorar legibilidad */
+    word-break: break-word; /* Para evitar overflow con palabras largas */
 }
 
 
-/* Estilos generales del popup */
-.popup {
+/* Estilos generales del popup (para Wishlist) */
+/* Usando los IDs originales de tu HTML: #popup, #btnCerrarPopup, etc. */
+.popup#popup { 
+    /* ... (tus estilos de popup existentes, asegúrate que funcionen) ... */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    background: rgba(0, 0, 0, 0.6); /* Un poco más oscuro */
     display: flex;
     justify-content: center;
     align-items: center;
-    visibility: hidden; /* Inicialmente oculto */
+    visibility: hidden; 
     opacity: 0;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    z-index: 1000; /* Asegurar que esté por encima de todo */
 }
 
-/* Contenedor del contenido del popup */
-.popup-content {
-    background: #333;
+.popup#popup.mostrar { /* Clase que añade el JS */
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup#popup .popup-content {
+    background: #3a3a3a; /* Ligeramente diferente para distinguirlo */
     color: whitesmoke;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
-    width: 350px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px; /* Ancho máximo */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
     text-align: center;
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Efecto de entrada */
 @keyframes fadeIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-/* Botón de cerrar */
-.close {
+.popup#popup .close#btnCerrarPopup {
     position: absolute;
     top: 10px;
     right: 15px;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
-    color: #555;
-    transition: color 0.2s;
+    color: #aaa; /* Color base */
+    transition: color 0.2s, transform 0.2s;
 }
 
-.close:hover {
-    color: #d00;
+.popup#popup .close#btnCerrarPopup:hover {
+    color: #ff4d4d; /* Rojo al pasar el mouse */
+    transform: scale(1.1);
 }
 
-/* Estilos de la lista */
-.listas {
+.popup#popup ul.listas#popupWishlistListasUl {
     list-style: none;
     padding: 0;
     margin-top: 20px;
+    max-height: 200px; /* Altura máxima para scroll si hay muchas listas */
+    overflow-y: auto;
 }
 
-.lista {
+.popup#popup ul.listas#popupWishlistListasUl li.lista {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #222;
-    padding: 10px;
-    margin: 5px 0;
+    background: #2c2c2c; /* Fondo más oscuro para items de lista */
+    padding: 12px 15px;
+    margin: 8px 0;
     border-radius: 5px;
+    border: 1px solid #444; /* Borde sutil */
+}
+.popup#popup ul.listas#popupWishlistListasUl li.lista input[type="checkbox"] {
+    margin-left: 10px;
+    transform: scale(1.2); /* Hacer checkbox un poco más grande */
 }
 
-/* Botón de confirmar */
-.agregar {
+
+.popup#popup button.agregar#popupBtnAgregarWishlist {
     background: #ffcc00;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    margin-top: 15px;
-    transition: background 0.3s;
+    margin-top: 20px;
+    color: #333;
+    transition: background-color 0.3s;
 }
 
-.agregar:hover {
+.popup#popup button.agregar#popupBtnAgregarWishlist:hover {
     background: #e6b800;
 }
 
-/* Clase para mostrar el popup */
-.popup.mostrar {
-    visibility: visible;
-    opacity: 1;
+/* Info del producto */
+section.producto div.info { /* Usado en producto.php para el div de info */
+    margin-top: 10px;
+    padding: 15px; /* Ajustar padding para hacer espacio al ícono si es necesario */
+    position: relative; /* Necesario para posicionar el ícono fa-ellipsis-v absolutamente */
+    /* text-align: center; Si lo tenías, considera si el ícono debe afectar esto */
 }
 
+/* Estilos para el ícono de opciones (tres puntos) para Wishlist */
+/* Usando el ID que le dimos en el HTML */
+#btnAbrirPopupWishlist {
+    position: absolute;
+    top: 15px;  /* Distancia desde la parte superior del div.info */
+    right: 15px; /* Distancia desde la parte derecha del div.info */
+    font-size: 22px; /* Tamaño del ícono */
+    color: #ccc;    /* Color inicial del ícono */
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 10; /* Para asegurar que esté por encima de otros elementos si es necesario */
+}
+
+#btnAbrirPopupWishlist:hover {
+    color: #ffcc00; /* Color al pasar el mouse (amarillo) */
+}
+
+
+/* Ajustes para el contenido dentro de div.info para que no se solape con el ícono si es necesario */
+section.producto div.info h2 {
+    margin-right: 30px; /* Ejemplo: Añadir margen si el título es largo y podría chocar con el ícono */
+    /* O considera text-align: left si el ícono está a la derecha y el texto centrado se ve raro */
+}
+
+
+/* Responsive */
 @media (max-width: 768px) {
-    .categorias {
-        grid-template-columns: repeat(2, 1fr);
+    section.producto, 
+    section.calificacion, 
+    section.comentarios {
+        width: 95%; /* Más ancho en móviles */
     }
 
-    .producto, .calificacion, .comentarios {
-        width: 90%; /* Make the product card wider on smaller screens */
+    section.producto ul.categorias {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Ajustar para móviles */
     }
 
     .multimedia img,
     .multimedia video {
-        max-width: 100%; /* Make multimedia items responsive */
+        max-width: 100%; 
     }
     
-    .producto .fa-ellipsis-v {
-        top: 740px;
-        right: 90px;
+}
+
+/* Responsive para el ícono de tres puntos si es necesario */
+@media (max-width: 768px) {
+    section.producto div.info {
+        padding: 10px; /* Ajustar padding en móviles */
+    }
+
+    #btnAbrirPopupWishlist {
+        top: 10px;
+        right: 10px;
+        font-size: 20px; /* Ligeramente más pequeño en móviles si es necesario */
+    }
+
+    section.producto div.info h2 {
+        margin-right: 25px; /* Ajustar margen en móviles */
     }
 }
