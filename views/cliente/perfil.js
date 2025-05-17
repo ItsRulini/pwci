@@ -18,26 +18,6 @@ document.getElementById("btnCerrarPopup").addEventListener("click", function() {
     document.getElementById("popup").style.display = "none";
 });
 
-
-// // Mostrar el pop-up al hacer clic en el ícono
-// document.querySelectorAll(".headerLista .fas").forEach(function(icono) {
-//     icono.addEventListener("click", function() {
-//         alert("Hola, soy un pop-up de opciones.");
-//         const popup = this.closest(".lista").querySelector(".pop-up-options");
-//         if (popup) {
-//             popup.style.display = "block";
-//         }
-//     });
-// });
-
-// // Cerrar el pop-up al hacer clic en la "X"
-// document.querySelectorAll(".close").forEach(function(btn) {
-//     btn.addEventListener("click", function() {
-//         const popup = this.closest(".pop-up-options");
-//         popup.style.display = "none";
-//     });
-// });
-
 // Mostrar el pop-up al hacer clic en el ícono
 document.querySelectorAll(".headerLista .fas").forEach(function(icono) {
     icono.addEventListener("click", function(event) {

@@ -12,18 +12,34 @@ function cargarProductosPopulares() {
         .then(productos => {
             const section = document.getElementById('Populares');
             const lista = document.getElementById('ListaPopulares');
-            lista.innerHTML = '';
+            lista.innerHTML = ''; // Limpiar lista
 
-            if (!productos.length) {
-                section.style.display = 'none';
+            if (!productos || productos.length === 0) { // Comprobar si productos es null o vacío
+                if (section) section.style.display = 'none';
                 return;
             } else {
-                section.style.display = 'block';
+                if (section) section.style.display = 'block';
             }
 
             productos.forEach(producto => {
-                lista.innerHTML += crearProductoHTML(producto, true);
+                // Determinar los parámetros para crearProductoHTML basado en producto.tipo
+                let mostrarPrecioParaHTML;
+                let esCotizacionParaHTML;
+
+                if (producto.tipo === 'Cotizacion') {
+                    mostrarPrecioParaHTML = false; // No mostrar precio numérico
+                    esCotizacionParaHTML = true;   // Indicar que es cotización (para botón "Enviar mensaje")
+                } else { // Asumir 'Venta' u otro tipo que deba mostrar precio
+                    mostrarPrecioParaHTML = true;  // Mostrar precio numérico
+                    esCotizacionParaHTML = false;  // No es cotización (para botón "Añadir al carrito")
+                }
+                lista.innerHTML += crearProductoHTML(producto, mostrarPrecioParaHTML, esCotizacionParaHTML);
             });
+        })
+        .catch(error => {
+            console.error('Error cargando productos populares:', error);
+            const section = document.getElementById('Populares');
+            if (section) section.style.display = 'none'; // Ocultar sección en caso de error
         });
 }
 
@@ -89,28 +105,6 @@ function cargarProductosGenerales() {
             });
         });
 }
-
-
-// function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false) {
-//      const imagen = producto.imagenPrincipal 
-//          ? `../../multimedia/productos/${producto.idProducto}/${producto.imagenPrincipal}` 
-//          : '../../multimedia/default/default.jpg';
-
-//      const precio = mostrarPrecio
-//          ? `<p>$${producto.precio} MXN</p><button onclick="agregarAlCarrito(${producto.idProducto})">Añadir al carrito</button>
-// `
-//          : `<p>Negociable</p><button>Enviar mensaje</button>`;
-
-//      return `
-//          <li class="producto">
-//              <img src="${imagen}" alt="${producto.nombre}">
-//              <div class="info">
-//                  <a href="producto.php?idProducto=${producto.idProducto}">${producto.nombre}</a>
-//                  ${precio}
-//              </div>
-//          </li>
-//      `;
-//  }
 
 function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false) {
     const imagen = producto.imagenPrincipal

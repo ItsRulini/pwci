@@ -89,7 +89,7 @@ $usuario = $_SESSION['usuario'];
                          
                         <tr>
                             <td>1</td>
-                            <td>Tecnología</td>
+                            <td>Tecnología<br>Electrónica</td>
                             <td>Audifonos</td>
                             <td>$80 MXN</td>
                             <td>4.5</td>
@@ -126,8 +126,8 @@ $usuario = $_SESSION['usuario'];
                     <tbody id="compras-list">
                         <!-- Aquí se llenarán los datos de las compras desde el servidor -->
                          
-                        <tr>
-                            <td>Tecnología</td>
+                        <!-- <tr>
+                            <td>Tecnología<br>Electrónica</td>
                             <td>Audifonos</td>
                             <td>$80 MXN</td>
                             <td>
@@ -156,7 +156,7 @@ $usuario = $_SESSION['usuario'];
                                 </div>
                             </td>
                             <td><input type="text" class="comentario" name="comentario" placeholder="Escribe tu comentario"></td>
-                        </tr>
+                        </tr> -->
                         
                     </tbody>
                 </table>
