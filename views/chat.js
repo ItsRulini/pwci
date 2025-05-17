@@ -185,21 +185,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <span class="message-time">${msg.hora}</span>
                             `;
                         } else if (msg.tipo === "oferta") {
-                            // Botones de oferta (simplificado, la lógica de aceptar/rechazar se implementará después)
                             let botonesOfertaHTML = '';
-                            if (msg.esMio) { // El que envió la oferta (Vendedor)
-                                botonesOfertaHTML = `<button class="button-cancel-offer" data-idoferta="${msg.idMensaje}" title="Cancelar Oferta"><i class="fas fa-times"></i></button>`;
-                            } else { // El que recibe la oferta (Comprador)
-                                botonesOfertaHTML = `
-                                    <button class="button-approve-offer" data-idoferta="${msg.idMensaje}" title="Aceptar Oferta"><i class="fas fa-check"></i></button>
-                                    <button class="button-disapprove-offer" data-idoferta="${msg.idMensaje}" title="Rechazar Oferta"><i class="fas fa-times"></i></button>
-                                `;
-                            }
                             // Solo mostrar botones si la oferta está pendiente
-                            if (msg.ofertaEstatus !== 'pendiente') {
-                                botonesOfertaHTML = `<span class="oferta-estatus-${msg.ofertaEstatus}">Oferta ${msg.ofertaEstatus}</span>`;
+                            if (msg.ofertaEstatus === 'pendiente') {
+                                if (msg.esMio) { // El que envió la oferta (Vendedor)
+                                    botonesOfertaHTML = `<button class="button-cancel-offer" data-idoferta="${msg.idMensaje}" title="Cancelar Oferta"><i class="fas fa-times"></i></button>`;
+                                } else { // El que recibe la oferta (Comprador)
+                                    botonesOfertaHTML = `
+                                        <button class="button-approve-offer" data-idoferta="${msg.idMensaje}" title="Aceptar Oferta"><i class="fas fa-check"></i></button>
+                                        <button class="button-disapprove-offer" data-idoferta="${msg.idMensaje}" title="Rechazar Oferta"><i class="fas fa-times"></i></button>
+                                    `;
+                                }
+                            } else { // Si no está pendiente, mostrar el estado
+                                botonesOfertaHTML = `<span class="oferta-estatus oferta-estatus-${msg.ofertaEstatus.toLowerCase()}">Oferta ${msg.ofertaEstatus}</span>`;
                             }
-
 
                             div.innerHTML = `
                                 <div class="offer-content">
@@ -262,6 +261,40 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function manejarAccionOferta(idOferta, accion) {
+        if (!idChatSeleccionado) {
+            alert("Error: No hay un chat seleccionado.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("idOferta", idOferta);
+        formData.append("accion", accion);
+        // El idUsuarioAccion se toma de la sesión en el backend
+
+        fetch("../../controllers/actualizarEstadoOferta.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message || `Oferta ${accion === 'cancelar' ? 'cancelada' : accion + 'a'}.`);
+                cargarMensajes(idChatSeleccionado); // Recargar mensajes para ver el estado actualizado
+                if (accion === 'aceptar' && data.carrito_message) {
+                    // Podrías mostrar un mensaje más específico sobre el carrito si es necesario
+                    console.log("Respuesta del carrito: ", data.carrito_message);
+                }
+            } else {
+                alert("Error al procesar la oferta: " + (data.message || "Error desconocido."));
+            }
+        })
+        .catch(err => {
+            console.error(`Error al ${accion} oferta:`, err);
+            alert(`Ocurrió un error de red al intentar ${accion} la oferta.`);
+        });
+    }
+
     // --- EVENT LISTENERS ---
     if (sendBtn) {
         sendBtn.addEventListener("click", enviarMensajeTexto);
@@ -287,6 +320,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    chatMessagesContainer.addEventListener("click", function(e) {
+        const target = e.target.closest("button"); // Busca el botón más cercano al clic
+        if (!target) return;
+
+        const idOferta = target.dataset.idoferta;
+        if (!idOferta) return;
+
+        if (target.classList.contains("button-approve-offer")) {
+            if (ROL_USUARIO_ACTUAL === "Comprador") {
+                if (confirm("¿Estás seguro de que quieres aceptar esta oferta? Se agregará al carrito.")) {
+                    manejarAccionOferta(idOferta, "aceptar");
+                }
+            }
+        } else if (target.classList.contains("button-disapprove-offer")) {
+            if (ROL_USUARIO_ACTUAL === "Comprador") {
+                if (confirm("¿Estás seguro de que quieres rechazar esta oferta?")) {
+                    manejarAccionOferta(idOferta, "rechazar");
+                }
+            }
+        } else if (target.classList.contains("button-cancel-offer")) {
+            if (ROL_USUARIO_ACTUAL === "Vendedor") {
+                 if (confirm("¿Estás seguro de que quieres cancelar esta oferta?")) {
+                    manejarAccionOferta(idOferta, "cancelar");
+                }
+            }
+        }
+    });
+
     // Lógica para el popup de ofertas (solo si los elementos existen - Vendedor)
     if (ROL_USUARIO_ACTUAL === "Vendedor" && offerBtn && ofertaContainerDiv && popupOverlay && closeOfferPopupBtn && ofertaForm) {
         offerBtn.addEventListener("click", () => {
@@ -298,17 +359,14 @@ document.addEventListener("DOMContentLoaded", function () {
             popupOverlay.style.display = "block";
         });
 
-        closeOfferPopupBtn.addEventListener("click", () => {
+        const cerrarPopupOferta = () => {
             ofertaContainerDiv.style.display = "none";
             popupOverlay.style.display = "none";
             ofertaForm.reset();
-        });
-        
-        popupOverlay.addEventListener("click", () => { // Cerrar si se hace clic en el overlay
-            ofertaContainerDiv.style.display = "none";
-            popupOverlay.style.display = "none";
-            ofertaForm.reset();
-        });
+        };
+
+        closeOfferPopupBtn.addEventListener("click", cerrarPopupOferta);
+        popupOverlay.addEventListener("click", cerrarPopupOferta);
 
         ofertaForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -329,19 +387,16 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("idChat", idChatSeleccionado);
             formData.append("precio", precio);
             formData.append("descripcion", descripcion);
-            // idRemitente (Vendedor) se toma de la sesión en el backend
 
-            fetch("../../controllers/enviarOferta.php", { // Necesitarás crear este controlador
+            fetch("../../controllers/enviarOferta.php", {
                 method: "POST",
                 body: formData
             })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    ofertaForm.reset();
-                    ofertaContainerDiv.style.display = "none";
-                    popupOverlay.style.display = "none";
-                    cargarMensajes(idChatSeleccionado); // Recargar para ver la nueva oferta
+                    cerrarPopupOferta();
+                    cargarMensajes(idChatSeleccionado); 
                 } else {
                     alert("Error al enviar oferta: " + (data.message || "Error desconocido."));
                 }

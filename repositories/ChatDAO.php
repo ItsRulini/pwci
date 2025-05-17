@@ -240,5 +240,101 @@ class ChatDAO {
         }
         return $resultado;
     }
+
+    public function actualizarEstadoOferta($idOferta, $nuevoEstado, $idUsuarioAccion) {
+        $stmt = $this->conn->prepare("CALL spActualizarEstadoOferta(?, ?, ?)");
+        if (!$stmt) {
+            error_log("ChatDAO::actualizarEstadoOferta - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno del servidor (prepare).'];
+        }
+
+        $stmt->bind_param("isi", $idOferta, $nuevoEstado, $idUsuarioAccion);
+        
+        $executeSuccess = $stmt->execute();
+
+        if (!$executeSuccess) {
+            error_log("ChatDAO::actualizarEstadoOferta - Execute failed: " . $stmt->error);
+            $stmt->close();
+            // Limpiar resultados si execute falló pero la conexión sigue abierta
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) {
+                    $res->free();
+                }
+            }
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al procesar la acción de la oferta.'];
+        }
+
+        $result = $stmt->get_result();
+        if (!$result) {
+            // Esto podría pasar si el SP no devuelve un result set, pero el nuestro sí lo hace.
+            // O si hay un error después de execute pero antes de que get_result pueda obtenerlo.
+            error_log("ChatDAO::actualizarEstadoOferta - get_result failed: " . $this->conn->error . " (stmt_error: " . $stmt->error . ")");
+            $stmt->close();
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) {
+                    $res->free();
+                }
+            }
+            return ['status' => 'FAIL_GET_RESULT', 'message' => 'Error al obtener respuesta del servidor.'];
+        }
+        
+        $response = $result->fetch_assoc();
+        $result->free(); // Liberar el conjunto de resultados actual
+        
+        $stmt->close(); // Cerrar el statement
+        
+        // Limpiar cualquier conjunto de resultados adicional que el SP pudiera haber generado
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) {
+                $res_extra->free();
+            }
+        }
+
+        if (!$response) {
+            // Si $response es null, significa que fetch_assoc no devolvió filas,
+            // lo cual es inesperado ya que el SP siempre devuelve una fila.
+            error_log("ChatDAO::actualizarEstadoOferta - fetch_assoc devolvió null. El SP no retornó la fila esperada.");
+            return ['status' => 'FAIL_NO_RESPONSE_ROW', 'message' => 'Respuesta inesperada del servidor.'];
+        }
+        
+        return $response; // Debería ser ['status' => '...', 'message' => '...', 'idProducto' => ..., 'precioOferta' => ...]
+    }
+
+    /**
+     * Agrega una oferta aceptada al carrito del comprador.
+     *
+     * @param int $idUsuarioComprador
+     * @param int $idProducto
+     * @param int $idMensajeOferta
+     * @param float $precioOferta
+     * @return array Resultado con 'status', 'message', y opcionalmente 'idLista'.
+     */
+    public function agregarOfertaAceptadaAlCarrito($idUsuarioComprador, $idProducto, $idMensajeOferta, $precioOferta) {
+        $stmt = $this->conn->prepare("CALL spAgregarOfertaAceptadaAlCarrito(?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log("ChatDAO::agregarOfertaAceptadaAlCarrito - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL', 'message' => 'Error al preparar la adición al carrito.'];
+        }
+        $stmt->bind_param("iiid", $idUsuarioComprador, $idProducto, $idMensajeOferta, $precioOferta);
+        
+        $success = $stmt->execute();
+        $result = $stmt->get_result(); // Para obtener el SELECT del SP
+        $response = $result->fetch_assoc();
+
+        if (!$success || !$response) {
+            error_log("ChatDAO::agregarOfertaAceptadaAlCarrito - Error al ejecutar o fetching result: " . $stmt->error);
+            $stmt->close();
+            while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+            return ['status' => 'FAIL', 'message' => 'Error al ejecutar la adición al carrito.'];
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) {
+                $res->free();
+            }
+        }
+        return $response; // ['status' => '...', 'message' => '...', 'idLista' => ...]
+    }
 }
 ?>
