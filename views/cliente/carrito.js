@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const listaProductosEl = document.querySelector(".contenido-carrito"); // El UL donde van los <li>
     const vaciarBtn = document.querySelector(".clear-btn");
     const carritoVacioEl = document.querySelector(".carrito-vacio");
-    // const comprarBtn = document.querySelector(".btn-comprar"); // Ya lo tienes
+    const comprarBtn = document.querySelector(".btn-comprar"); // Ya lo tienes
 
     const resumenSubtotalEl = document.querySelector(".linea-resumen span:nth-child(2)");
     const resumenEnvioEl = document.querySelectorAll(".linea-resumen span:nth-child(2)")[1];
@@ -56,13 +56,15 @@ document.addEventListener("DOMContentLoaded", function () {
     function verificarCarritoVacio() {
         const productosLi = listaProductosEl.querySelectorAll(".producto");
         if (productosLi.length === 0) {
-            carritoVacioEl.style.display = "block"; // O 'block' según tu CSS para .carrito-vacio
+            carritoVacioEl.style.display = "block"; 
             contenidoCarritoEl.style.display = "none";
-            if (paypalContainer) paypalContainer.innerHTML = ''; // Limpiar botones de PayPal si el carrito está vacío
+            if (paypalContainer) paypalContainer.innerHTML = ''; 
             paypalRendered = false;
+            if(comprarBtn) comprarBtn.style.display = 'none'; // Ocultar botón de PayPal si no hay items
         } else {
             carritoVacioEl.style.display = "none";
             contenidoCarritoEl.style.display = "block";
+             if(comprarBtn) comprarBtn.style.display = 'block'; // Mostrar botón de PayPal
         }
     }
 
@@ -127,6 +129,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 verificarCarritoVacio();
                 recalcularTotales();
+
+                // if(comprarBtn) {
+                //     comprarBtn.addEventListener("click", function () {
+                //         if (productos.length > 0) {
+                //             configurarPaypal();
+                //         } else {
+                //             if (paypalContainer) paypalContainer.innerHTML = '';
+                //             paypalRendered = false;
+                //         }
+                //     });
+                // }
+                // Configurar PayPal solo si hay productos y el contenedor existe
+                if (productos.length > 0 && paypalContainer) {
+                    configurarPaypal();
+                } else if (paypalContainer) {
+                    paypalContainer.innerHTML = ''; // Limpiar si no hay productos
+                    paypalRendered = false;
+                }
             })
             .catch(error => {
                 console.error('Error cargando carrito:', error);
@@ -211,17 +231,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Paypal
     function configurarPaypal() {
-        if (!paypalContainer || typeof paypal === 'undefined') return;
-        if (paypalRendered) return; // Evitar renderizar múltiples veces
-
+        if (!paypalContainer || typeof paypal === 'undefined') {
+            console.warn("Contenedor de PayPal o SDK no encontrado.");
+            return;
+        }
+        // Solo renderizar si no está ya renderizado y hay un total > 0
         const totalPagar = obtenerTotalNumerico();
+        if (paypalRendered && totalPagar > 0) return; 
         if (totalPagar <= 0) {
-            paypalContainer.innerHTML = ""; // Limpiar si no hay nada que pagar
+            paypalContainer.innerHTML = ""; 
             paypalRendered = false;
             return;
         }
+        
+        paypalContainer.innerHTML = ""; // Limpiar antes de re-renderizar
 
         paypal.Buttons({
             style: {
@@ -231,63 +255,128 @@ document.addEventListener("DOMContentLoaded", function () {
                 label:  'pay',
             },
             createOrder: function(data, actions) {
+                const totalActual = obtenerTotalNumerico(); // Obtener el total más reciente
+                if (totalActual <= 0) {
+                    alert("El total del carrito es cero. No se puede proceder con el pago.");
+                    return actions.reject();
+                }
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: totalPagar.toFixed(2) // Asegurar 2 decimales para PayPal
+                            value: totalActual.toFixed(2) 
                         }
                     }]
                 });
             },
             onCancel: function (data) {
-                // Manejar cancelación
-                console.log("Pago cancelado:", data);
-                // paypalContainer.innerHTML = ""; // Opcional: limpiar botones para reintentar
-                // paypalRendered = false;
+                console.log("Pago de PayPal cancelado:", data);
+                alert("Pago cancelado.");
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert('Compra completada por ' + details.payer.name.given_name + '!');
-                    // Aquí deberías:
-                    // 1. Registrar la compra en tu base de datos (backend)
-                    // 2. Vaciar el carrito del usuario (backend y frontend)
+                    // El pago fue aprobado por PayPal.
+                    // Ahora, procesar la compra en el backend.
+                    console.log('PayPal capture details:', details);
                     
-                    // Ejemplo de vaciar carrito en frontend después de pago exitoso:
-                    fetch('../../controllers/vaciarCarrito.php', { method: 'POST' })
-                        .then(() => cargarCarrito()); // Recargar para mostrar carrito vacío
-                    
-                    paypalContainer.innerHTML = ""; // Limpiar botones de PayPal
-                    paypalRendered = false; 
+                    const formData = new FormData();
+                    // Puedes enviar detalles de PayPal si los necesitas en el backend
+                    // formData.append('paypalOrderID', data.orderID);
+                    // formData.append('paypalPayerID', details.payer.payer_id);
+
+                    fetch('../../controllers/procesarCompra.php', {
+                        method: 'POST',
+                        body: formData // Enviar formData si es necesario, o vacío si el backend usa la sesión
+                    })
+                    .then(response => response.json())
+                    .then(backendResponse => {
+                        if (backendResponse.success) {
+                            alert('¡Compra completada y registrada! ' + (backendResponse.message || ''));
+                            // La sesión de idLista se actualiza en el backend.
+                            // El carrito actual se marcó como comprado.
+                            // Se creó un nuevo carrito vacío para el usuario.
+                            cargarCarrito(); // Esto cargará el nuevo carrito vacío.
+                        } else {
+                            alert('Error al registrar la compra: ' + (backendResponse.message || 'Error desconocido.'));
+                            // El pago en PayPal se hizo, pero hubo un error en tu backend.
+                            // Deberías tener un sistema para manejar estas discrepancias.
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al procesar la compra en el backend:', error);
+                        alert('Error de conexión al finalizar la compra. Contacta a soporte.');
+                    })
+                    .finally(() => {
+                        paypalContainer.innerHTML = ""; 
+                        paypalRendered = false; 
+                    });
                 });
             },
             onError: function (err) {
-                console.error("Error de PayPal:", err);
-                alert("Ocurrió un error con el proceso de pago. Por favor, intenta de nuevo.");
-                // paypalContainer.innerHTML = ""; // Opcional: limpiar botones para reintentar
-                // paypalRendered = false;
+                console.error("Error de PayPal SDK:", err);
+                alert("Ocurrió un error con el proceso de pago de PayPal. Por favor, intenta de nuevo.");
+                paypalContainer.innerHTML = "<p style='color:red;'>Error al cargar opciones de pago.</p>";
+                paypalRendered = false;
             }
         }).render('#paypal-button-container').then(() => {
             paypalRendered = true;
+            console.log("Botones de PayPal renderizados.");
         }).catch(err => {
             console.error("Error al renderizar botones de PayPal:", err);
-            paypalContainer.innerHTML = "<p style='color:red;'>Error al cargar opciones de pago.</p>";
+            if (paypalContainer) {
+                paypalContainer.innerHTML = "<p style='color:red;'>Error al cargar opciones de pago de PayPal.</p>";
+            }
+        });
+    }
+    
+    if(comprarBtn && paypalContainer) {
+        comprarBtn.addEventListener("click", function () {
+            const productosLi = listaProductosEl.querySelectorAll(".producto");
+            if (productosLi.length > 0) {
+                // No llamamos a configurarPaypal() directamente aquí.
+                // Se llamará desde cargarCarrito() si es necesario,
+                // o si quieres que el botón "Proceder al pago" active la renderización:
+                if (!paypalRendered) { // Solo si no están ya visibles
+                    configurarPaypal();
+                }
+                // Si ya están visibles, PayPal maneja el flujo.
+            } else {
+                alert("Tu carrito está vacío.");
+                if (paypalContainer) paypalContainer.innerHTML = '';
+                paypalRendered = false;
+            }
+        });
+    } else if (comprarBtn && !paypalContainer) {
+        // Si el botón de comprar existe pero el contenedor de PayPal no,
+        // podrías implementar un flujo de compra sin PayPal aquí.
+        comprarBtn.addEventListener("click", function() {
+            alert("El contenedor de PayPal no está disponible. Procediendo con flujo alternativo (no implementado).");
+            // Aquí iría la lógica para procesar la compra sin PayPal,
+            // similar al fetch que se hace en onApprove pero sin los detalles de PayPal.
+             const productosLi = listaProductosEl.querySelectorAll(".producto");
+             if (productosLi.length === 0) {
+                 alert("Tu carrito está vacío.");
+                 return;
+             }
+
+            if (confirm("¿Confirmar compra (sin PayPal)?")) {
+                 fetch('../../controllers/procesarCompra.php', { method: 'POST' })
+                 .then(response => response.json())
+                 .then(backendResponse => {
+                     if (backendResponse.success) {
+                         alert('¡Compra completada y registrada! ' + (backendResponse.message || ''));
+                         cargarCarrito();
+                     } else {
+                         alert('Error al registrar la compra: ' + (backendResponse.message || 'Error desconocido.'));
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error al procesar la compra en el backend:', error);
+                     alert('Error de conexión al finalizar la compra. Contacta a soporte.');
+                 });
+            }
         });
     }
 
-    // Llamar a configurarPaypal cuando el carrito se carga o actualiza
-    // Lo haremos dentro de cargarCarrito, después de recalcularTotales y verificarCarritoVacio.
-    // Modifiqué cargarCarrito para que llame a verificarCarritoVacio y recalcularTotales.
-    // Y ahora, cargarCarrito también debe llamar a configurarPaypal si hay productos.
-
-    // Modificación en cargarCarrito para llamar a configurarPaypal:
-    // ... dentro de cargarCarrito, después de recalcularTotales();
-    // if (productos.length > 0) {
-    //     configurarPaypal();
-    // } else {
-    //     if (paypalContainer) paypalContainer.innerHTML = '';
-    //     paypalRendered = false;
-    // }
-    // Esta lógica ya está implícita en verificarCarritoVacio y el inicio de configurarPaypal.
 
     // Inicializar
     cargarCarrito(); 

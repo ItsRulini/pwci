@@ -132,8 +132,6 @@ function crearProductoHTML(producto, mostrarPrecio = true, esCotizacion = false)
     `;
 }
 
-
-
  function agregarAlCarrito(idProducto) {
     const formData = new FormData();
     formData.append('idProducto', idProducto);
