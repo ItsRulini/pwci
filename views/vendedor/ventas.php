@@ -1,13 +1,11 @@
 <?php
-require_once '../../models/Usuario.php';
+require_once '../../models/Usuario.php'; // Ajusta la ruta si es necesario
+require_once '../../auth/auth.php'; // Para $usuario y requireRole
 
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php"); // Redirigir al login si no hay sesión
-    exit();
-}
+// session_start() ya está en auth.php
+// $usuario ya está definido en auth.php
+requireRole(['Vendedor']); // Solo Vendedores pueden acceder
 
-$usuario = $_SESSION['usuario'];
 ?>
 
 <!DOCTYPE html>
@@ -42,16 +40,16 @@ $usuario = $_SESSION['usuario'];
             <h2>Filtros</h2>
             <form id="filtrosForm">
                 <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria">
-                    <option value="">Todas</option>
-                    <option value="ropa">Ropa</option>
-                    <option value="electronica">Electrónica</option>
-                    <option value="hogar">Hogar</option>
+                <select id="categoria" name="idCategoria">
+                    <option value="0">Todas</option> 
+                    <!-- {/* Las categorías se cargarán aquí por JS */} -->
                 </select>
 
-                <label for="fecha">Fecha de venta</label>
-                <input type="date" id="desdeFechaVenta" name="desde">
-                <input type="date" id="hastaFechaVenta" name="hasta">
+                <label for="fechaDesdeVenta">Fecha de venta (desde):</label>
+                <input type="date" id="desdeFechaVenta" name="fechaDesde"> 
+
+                <label for="hastaFechaVenta">Fecha de venta (hasta):</label>
+                <input type="date" id="hastaFechaVenta" name="fechaHasta">
 
                 <button type="submit">Aplicar Filtros</button>
             </form>
@@ -65,22 +63,17 @@ $usuario = $_SESSION['usuario'];
                     <thead>
                         <tr>
                             <th>Fecha y hora de venta</th>
-                            <th>Categoría</th>
+                            <th>Categoría(s)</th>
                             <th>Producto</th>
-                            <th>Calificación</th>
-                            <th>Precio</th>
-                            <th>Existencia actual en stock</th>
+                            <th>Cantidad Vendida</th>
+                            <th>Calificación Prom.</th>
+                            <th>Precio Venta</th>
+                            <th>Existencia Actual</th>
                         </tr>
                     </thead>
-                    <tbody id="ventasBody">
-                        <tr>
-                            <td>2023-10-01 14:30</td>
-                            <td>Ropa</td>
-                            <td>Camiseta</td>
-                            <td>4.5</td>
-                            <td>$20.00 MXN</td>
-                            <td>50</td>
-                        </tr>
+                    <tbody id="tbodyVentasDetalladas">
+                        <!-- {/* */} -->
+                        <tr><td colspan="7" style="text-align:center;">Aplicar filtros para ver resultados.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -94,24 +87,14 @@ $usuario = $_SESSION['usuario'];
                 <table class="ventas-table">
                     <thead>
                         <tr>
-                            <th>Mes</th>
+                            <th>Mes-Año</th>
                             <th>Categoría</th>
-                            <th>Número de ventas</th>
+                            <th>Unidades Vendidas</th>
                         </tr>
                     </thead>
-                    <tbody id="ventasBody">
-                        <tr>
-                            <td>Enero</td>
-                            <td>
-                                Ropa <br>
-                                Tecnología
-                            </td>
-                            <td>
-                                10 <br>
-                                50
-                            </td>
-                        </tr>
-                        </tr>
+                    <tbody id="tbodyVentasAgrupadas">
+                        <!-- {/* */} -->
+                         <tr><td colspan="3" style="text-align:center;">Aplicar filtros para ver resultados.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -119,5 +102,6 @@ $usuario = $_SESSION['usuario'];
 
     </main>
     
+    <script src="ventas.js"></script> 
 </body>
 </html>

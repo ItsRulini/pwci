@@ -166,5 +166,93 @@ class TransaccionDAO {
         while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
         return $productos;
     }
+
+    /**
+     * Obtiene las ventas detalladas para un vendedor con filtros opcionales.
+     *
+     * @param int $idVendedor
+     * @param int|null $idCategoriaFiltro 0 o null para todas.
+     * @param string|null $fechaDesde Formato YYYY-MM-DD.
+     * @param string|null $fechaHasta Formato YYYY-MM-DD.
+     * @return array Lista de ventas detalladas.
+     */
+    public function obtenerVentasDetalladasVendedor($idVendedor, $idCategoriaFiltro, $fechaDesde, $fechaHasta) {
+        $ventas = [];
+        $fechaDesde = empty($fechaDesde) ? null : $fechaDesde;
+        $fechaHasta = empty($fechaHasta) ? null : $fechaHasta;
+        $idCategoriaFiltro = ($idCategoriaFiltro === '' || $idCategoriaFiltro === 0 || $idCategoriaFiltro === "0") ? null : (int)$idCategoriaFiltro;
+
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spObtenerVentasDetalladasVendedor(?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log("TransaccionDAO::obtenerVentasDetalladasVendedor - Error en prepare: " . $this->conn->error);
+            return $ventas;
+        }
+        $stmt->bind_param("iiss", $idVendedor, $idCategoriaFiltro, $fechaDesde, $fechaHasta);
+        
+        if (!$stmt->execute()) {
+            error_log("TransaccionDAO::obtenerVentasDetalladasVendedor - Error en execute: " . $stmt->error);
+            $stmt->close(); return $ventas;
+        }
+        $resultado = $stmt->get_result();
+        if ($resultado) {
+            while ($fila = $resultado->fetch_assoc()) {
+                $ventas[] = $fila;
+            }
+            $resultado->free();
+        }
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $ventas;
+    }
+
+    /**
+     * Obtiene las ventas agrupadas para un vendedor con filtros opcionales.
+     *
+     * @param int $idVendedor
+     * @param int|null $idCategoriaFiltro 0 o null para todas.
+     * @param string|null $fechaDesde Formato YYYY-MM-DD.
+     * @param string|null $fechaHasta Formato YYYY-MM-DD.
+     * @return array Lista de ventas agrupadas.
+     */
+    public function obtenerVentasAgrupadasVendedor($idVendedor, $idCategoriaFiltro, $fechaDesde, $fechaHasta) {
+        $ventas = [];
+        $fechaDesde = empty($fechaDesde) ? null : $fechaDesde;
+        $fechaHasta = empty($fechaHasta) ? null : $fechaHasta;
+        $idCategoriaFiltro = ($idCategoriaFiltro === '' || $idCategoriaFiltro === 0 || $idCategoriaFiltro === "0") ? null : (int)$idCategoriaFiltro;
+
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spObtenerVentasAgrupadasVendedor(?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log("TransaccionDAO::obtenerVentasAgrupadasVendedor - Error en prepare: " . $this->conn->error);
+            return $ventas;
+        }
+        $stmt->bind_param("iiss", $idVendedor, $idCategoriaFiltro, $fechaDesde, $fechaHasta);
+
+        if (!$stmt->execute()) {
+            error_log("TransaccionDAO::obtenerVentasAgrupadasVendedor - Error en execute: " . $stmt->error);
+            $stmt->close(); return $ventas;
+        }
+        $resultado = $stmt->get_result();
+        if ($resultado) {
+            while ($fila = $resultado->fetch_assoc()) {
+                $ventas[] = $fila;
+            }
+            $resultado->free();
+        }
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $ventas;
+    }
 }
 ?>
