@@ -51,6 +51,7 @@ if ($rolUsuario === 'Comprador') {
 
         <ul class="nav-links">
             <li><a href="<?php echo $rutaBaseRol; ?>perfil.php">Perfil</a></li>
+            <li><a href="<?php echo $rutaBaseRol; ?>social.php">Social</a></li>
             <li><a href="<?php echo $rutaBaseRol; ?>chat.php">Chat</a></li>
             <?php if ($rolUsuario === 'Comprador'): ?>
                 <li><a href="<?php echo $rutaBaseRol; ?>social.php">Social</a></li>

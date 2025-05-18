@@ -464,5 +464,37 @@ class CarritoDAO {
         }
         return $response;
     }
+
+    public function getWishlistsPublicasDeUsuario($idUsuarioConsultado) {
+            $wishlists = [];
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) { $res->free(); }
+            }
+
+            $stmt = $this->conn->prepare("CALL spGetWishlistsPublicasDeUsuario(?)");
+            if (!$stmt) {
+                error_log("CarritoDAO::getWishlistsPublicasDeUsuario - Error en prepare: " . $this->conn->error);
+                return $wishlists;
+            }
+            $stmt->bind_param("i", $idUsuarioConsultado);
+
+            if ($stmt->execute()) {
+                $resultado = $stmt->get_result();
+                if ($resultado) {
+                    while ($row = $resultado->fetch_assoc()) {
+                        $wishlists[] = $row;
+                    }
+                    $resultado->free();
+                }
+            } else {
+                error_log("CarritoDAO::getWishlistsPublicasDeUsuario - Error en execute: " . $stmt->error);
+            }
+            $stmt->close();
+            
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) { $res->free(); }
+            }
+            return $wishlists;
+        }
 }
 ?>

@@ -365,6 +365,38 @@ class ProductoDAO {
         }
         return $comentarios;
     }
+
+    public function getProductosVisiblesVendedor($idVendedor) {
+            $productos = [];
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) { $res->free(); }
+            }
+
+            $stmt = $this->conn->prepare("CALL spGetProductosVisiblesVendedor(?)");
+            if (!$stmt) {
+                error_log("ProductoDAO::getProductosVisiblesVendedor - Error en prepare: " . $this->conn->error);
+                return $productos;
+            }
+            $stmt->bind_param("i", $idVendedor);
+
+            if ($stmt->execute()) {
+                $resultado = $stmt->get_result();
+                if ($resultado) {
+                    while ($fila = $resultado->fetch_assoc()) {
+                        $productos[] = $fila;
+                    }
+                    $resultado->free();
+                }
+            } else {
+                error_log("ProductoDAO::getProductosVisiblesVendedor - Error en execute: " . $stmt->error);
+            }
+            $stmt->close();
+            
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) { $res->free(); }
+            }
+            return $productos;
+        }
 }
 
 ?>

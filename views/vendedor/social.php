@@ -43,15 +43,16 @@ if ($rolUsuarioActual === 'Comprador') {
         <?php endif; ?>
 
         <ul class="nav-links">
+            <li><a href="<?php echo $rutaBase; ?>perfil.php">Perfil</a></li>
             <?php if ($rolUsuarioActual === 'Comprador'): ?>
                 <li><a href="<?php echo $rutaBase; ?>social.php">Social</a></li>
                 <li><a href="<?php echo $rutaBase; ?>compra.php">Compras</a></li>
             <?php elseif ($rolUsuarioActual === 'Vendedor'): ?>
-                <li><a href="<?php echo $rutaBase; ?>chat.php">Chat</a></li> {/* Vendedor tiene Chat en vez de Social aquí */}
+                <li><a href="<?php echo $rutaBase; ?>social.php">Social</a></li>
+                <li><a href="<?php echo $rutaBase; ?>chat.php">Chat</a></li>
                 <li><a href="<?php echo $rutaBase; ?>ventas.php">Ventas</a></li>
             <?php endif; ?>
-            <li><a href="<?php echo $rutaBase; ?>perfil.php">Perfil</a></li>
-            <li><a href="<?php echo $rutaBase; ?>chat.php">Chat</a></li>
+            
             <?php if ($rolUsuarioActual === 'Comprador'): ?>
             <li>
                 <a href="<?php echo $rutaBase; ?>carrito.php">

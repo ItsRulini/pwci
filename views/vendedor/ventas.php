@@ -27,6 +27,7 @@ requireRole(['Vendedor']); // Solo Vendedores pueden acceder
 
         <ul class="nav-links">
             <li><a href="perfil.php">Perfil</a></li>
+            <li><a href="social.php">Social</a></li>
             <li><a href="chat.php">Chat</a></li>
             <li><a href="ventas.php">Ventas</a></li>
             <li><a href="../logout.php">Cerrar sesión</a></li>

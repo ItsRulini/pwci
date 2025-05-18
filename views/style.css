@@ -10,7 +10,13 @@
 body {
     background-color: #f3f3f3;
     padding: 20px;
-}
+} 
+
+/* body {
+    background-color: #1e1e1e; Fondo oscuro general
+    color: #f0f0f0;
+    padding: 20px;
+} */
 
 .logo-link {
     text-decoration: none; /* Quita el subrayado */

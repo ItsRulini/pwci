@@ -239,6 +239,71 @@ class UsuarioDAO
         return $usuarios;
     }
 
+    public function obtenerPerfilesSocial($idUsuarioActual) {
+        $perfiles = [];
+        // Limpiar resultados previos de la conexión si es necesario
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spObtenerPerfilesSocial(?)");
+        if (!$stmt) {
+            error_log("UsuarioDAO::obtenerPerfilesSocial - Error en prepare: " . $this->conn->error);
+            return $perfiles;
+        }
+        $stmt->bind_param("i", $idUsuarioActual);
+
+        if (!$stmt->execute()) {
+            error_log("UsuarioDAO::obtenerPerfilesSocial - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return $perfiles;
+        }
+
+        $resultado = $stmt->get_result();
+        if ($resultado) {
+            while ($fila = $resultado->fetch_assoc()) {
+                // Puedes devolver arrays asociativos directamente
+                // o crear objetos Usuario simplificados si lo prefieres.
+                $perfiles[] = $fila;
+            }
+            $resultado->free();
+        }
+        $stmt->close();
+        
+        while ($this->conn->more_results() && $this->conn->next_result()) { // Limpieza final
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $perfiles;
+    }
+
+    public function getDetallesPerfilExterno($idUsuarioConsultado) {
+        $perfil = null;
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        $stmt = $this->conn->prepare("CALL spGetDetallesPerfilExterno(?)");
+        if (!$stmt) {
+            error_log("UsuarioDAO::getDetallesPerfilExterno - Error en prepare: " . $this->conn->error);
+            return null;
+        }
+        $stmt->bind_param("i", $idUsuarioConsultado);
+        if ($stmt->execute()) {
+            $resultado = $stmt->get_result();
+            if ($resultado) {
+                $perfil = $resultado->fetch_assoc(); // Solo esperamos una fila
+                $resultado->free();
+            }
+        } else {
+            error_log("UsuarioDAO::getDetallesPerfilExterno - Error en execute: " . $stmt->error);
+        }
+        $stmt->close();
+        
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        return $perfil;
+    }
+
 }
 
 
