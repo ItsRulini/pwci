@@ -120,19 +120,6 @@ class CarritoDAO {
         return $result->fetch_assoc(); // Retorna un array tipo ["idLista" => ...]
     }
 
-    public function obtenerWishlistsPorUsuario($idUsuario) {
-        $stmt = $this->conn->prepare("CALL spGetWishlistsUsuario(?)");
-        $stmt->bind_param("i", $idUsuario);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        $wishlists = [];
-        while ($row = $result->fetch_assoc()) {
-            $wishlists[] = $row;
-        }
-        return $wishlists;
-    }
-
     public function procesarCompra($idLista, $idUsuario) {
         $stmt = $this->conn->prepare("CALL spProcesarCompraYActualizarStock(?, ?)");
         if (!$stmt) {
@@ -203,5 +190,279 @@ class CarritoDAO {
         }
     }
 
+    public function obtenerWishlistsPorUsuario($idUsuario) {
+        $wishlists = [];
+        // Limpiar resultados previos
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spGetWishlistsUsuario(?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::obtenerWishlistsPorUsuario - Error en prepare: " . $this->conn->error);
+            return $wishlists;
+        }
+        $stmt->bind_param("i", $idUsuario);
+        
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::obtenerWishlistsPorUsuario - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return $wishlists;
+        }
+        
+        $result = $stmt->get_result();
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $wishlists[] = $row; // Contiene idLista, nombre, descripcion
+            }
+            $result->free();
+        }
+        $stmt->close();
+        
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $wishlists;
+    }
+
+    /**
+     * Crea una nueva wishlist para un usuario.
+     *
+     * @param int $idUsuario
+     * @param string $nombre
+     * @param string $descripcion
+     * @param string $privacidad ('Privada' o 'Publica')
+     * @return array Resultado con 'status', 'message', y 'idLista' si es exitoso.
+     */
+    public function crearWishlist($idUsuario, $nombre, $descripcion, $privacidad) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al crear wishlist.'];
+        // Limpiar resultados previos
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+        
+        // Usar un nombre de variable de sesión único para el parámetro OUT
+        $outParamName = "@idNewWishlist_" . uniqid();
+
+        $stmt = $this->conn->prepare("CALL spCrearWishlist(?, ?, ?, ?, {$outParamName})");
+        if (!$stmt) {
+            error_log("CarritoDAO::crearWishlist - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno (prepare).'];
+        }
+
+        $stmt->bind_param("isss", $idUsuario, $nombre, $descripcion, $privacidad);
+        
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::crearWishlist - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la creación de la wishlist.'];
+        }
+        
+        // El SP spCrearWishlist ahora devuelve un SELECT con status, message, idLista
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                $response = $spResponse; // Contendrá status, message, idLista
+            }
+            $result->free();
+        } else {
+             error_log("CarritoDAO::crearWishlist - No se pudo obtener resultado del SP: " . $this->conn->error);
+             $response = ['status' => 'FAIL_SP_RESULT', 'message' => 'No se obtuvo respuesta del servidor.'];
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $response;
+    }
+
+    public function getProductosDeLista($idLista, $idUsuario) {
+        $productos = [];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spGetProductosDeLista(?, ?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::getProductosDeLista - Error en prepare: " . $this->conn->error);
+            return $productos;
+        }
+        $stmt->bind_param("ii", $idLista, $idUsuario);
+        
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::getProductosDeLista - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return $productos;
+        }
+        
+        $resultado = $stmt->get_result();
+        if ($resultado) {
+            while ($fila = $resultado->fetch_assoc()) {
+                // Si el SP devuelve la fila de error, idProducto será NULL
+                if (isset($fila['idProducto']) && $fila['idProducto'] !== null) {
+                    $productos[] = $fila;
+                } else if (isset($fila['nombre'])) { // Para capturar el mensaje de error del SP
+                    error_log("CarritoDAO::getProductosDeLista - SP Mensaje: " . $fila['nombre']);
+                }
+            }
+            $resultado->free();
+        }
+        $stmt->close();
+        
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $productos;
+    }
+
+    public function eliminarWishlist($idLista, $idUsuario) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al eliminar wishlist.'];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spEliminarWishlist(?, ?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::eliminarWishlist - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno (prepare).'];
+        }
+        $stmt->bind_param("ii", $idLista, $idUsuario);
+
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::eliminarWishlist - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la eliminación.'];
+        }
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                $response = $spResponse;
+            }
+            $result->free();
+        } else {
+            error_log("CarritoDAO::eliminarWishlist - No se pudo obtener resultado del SP: " . $this->conn->error);
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $response;
+    }
+
+    public function actualizarWishlist($idLista, $idUsuario, $nuevoNombre, $nuevaDescripcion, $nuevaPrivacidad) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al actualizar wishlist.'];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spActualizarWishlist(?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::actualizarWishlist - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno (prepare).'];
+        }
+        $stmt->bind_param("iisss", $idLista, $idUsuario, $nuevoNombre, $nuevaDescripcion, $nuevaPrivacidad);
+
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::actualizarWishlist - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la actualización.'];
+        }
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                $response = $spResponse;
+            }
+            $result->free();
+        } else {
+            error_log("CarritoDAO::actualizarWishlist - No se pudo obtener resultado del SP: " . $this->conn->error);
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $response;
+    }
+
+    public function eliminarProductoDeWishlist($idLista, $idProducto, $idUsuario) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al eliminar producto de la wishlist.'];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spEliminarProductoDeWishlist(?, ?, ?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::eliminarProductoDeWishlist - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno (prepare).'];
+        }
+        $stmt->bind_param("iii", $idLista, $idProducto, $idUsuario);
+
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::eliminarProductoDeWishlist - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la eliminación del producto.'];
+        }
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                $response = $spResponse;
+            }
+            $result->free();
+        } else {
+            error_log("CarritoDAO::eliminarProductoDeWishlist - No se pudo obtener resultado del SP: " . $this->conn->error);
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $response;
+    }
+
+    public function agregarProductoAWishlist($idLista, $idProducto, $idUsuario) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al agregar a wishlist.'];
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        $stmt = $this->conn->prepare("CALL spAgregarProductoAWishlist(?, ?, ?)");
+        if (!$stmt) {
+            error_log("CarritoDAO::agregarProductoAWishlist - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno (prepare).'];
+        }
+        $stmt->bind_param("iii", $idLista, $idProducto, $idUsuario);
+
+        if (!$stmt->execute()) {
+            error_log("CarritoDAO::agregarProductoAWishlist - Error en execute: " . $stmt->error);
+            $stmt->close();
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la adición a wishlist.'];
+        }
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                $response = $spResponse;
+            }
+            $result->free();
+        } else {
+            error_log("CarritoDAO::agregarProductoAWishlist - No se pudo obtener resultado del SP: " . $this->conn->error);
+        }
+        
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        return $response;
+    }
 }
 ?>

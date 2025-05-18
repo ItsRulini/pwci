@@ -287,7 +287,7 @@
     margin-top: 5px;
 }
 
-#formWishlist input, 
+#formWishlist input,
 #formWishlist textarea {
     width: 100%;
     padding: 10px;
@@ -371,7 +371,7 @@
     margin: 5px 0;
 }
 
-#btnGuardarCambios{
+#btnGuardarCambiosWishlist{
     margin-top: 10px;
     background-color: #333;
     color: whitesmoke;
@@ -382,10 +382,331 @@
     transition: background-color 0.3s;
 }
 
-#btnGuardarCambios:hover {
+#btnGuardarCambiosWishlist:hover {
     color: black;
     background-color: #ffcc00;
 }
+
+/* En views/cliente/perfil.css */
+.lista .contenidoLista .producto a.enlace-producto-wishlist {
+    display: flex; /* Para que la imagen y la info se alineen como antes */
+    align-items: center;
+    text-decoration: none; /* Quitar subrayado del enlace */
+    color: inherit; /* Heredar color de texto para que no sea azul por defecto */
+    width: 100%; /* Para que el área clickeable ocupe todo el li.producto */
+}
+
+.lista .contenidoLista .producto a.enlace-producto-wishlist:hover .info span {
+    color: #ffcc00; /* Ejemplo de feedback visual al pasar el mouse sobre el nombre */
+}
+
+
+/* ... (Estilos existentes de perfil.css) ... */
+
+/* Estilos generales para los popups (si no los tienes ya de forma genérica) */
+.popup, .popup-editar {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    /* left: 0; */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente más oscuro */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegurar que esté por encima */
+    padding: 20px; /* Espacio por si el contenido es más grande que la ventana */
+    overflow-y: auto; /* Permitir scroll si el contenido es muy alto */
+}
+
+.popup-content, .popup-editar-content {
+    background: #3a3a3a; /* Fondo oscuro para el contenido del popup */
+    color: whitesmoke;
+    padding: 25px 30px; /* Más padding */
+    border-radius: 12px; /* Bordes más redondeados */
+    width: 90%;
+    max-width: 480px; /* Un poco más de ancho para el popup de edición */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    text-align: left; /* Alinear texto a la izquierda para formularios */
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* (Asegúrate que @keyframes fadeIn esté definido como en tu CSS anterior) */
+@keyframes fadeIn {
+    from { transform: translateY(-20px) scale(0.98); opacity: 0; } /* Efecto de entrada sutil */
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.popup-content h3, .popup-editar-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    color: #ffcc00; /* Título en amarillo */
+}
+.popup-editar-content h4 { /* Para "Productos:" */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #e0e0e0;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+}
+
+
+.close { /* Estilo común para los botones de cerrar 'x' */
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    line-height: 1; /* Mejor alineación vertical */
+}
+
+.close:hover {
+    color: #ff4d4d;
+    transform: scale(1.1);
+}
+
+/* Estilos para los formularios dentro de los popups (Crear y Editar Wishlist) */
+#formWishlist,
+#formEditarWishlist {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre elementos del formulario */
+}
+
+#formWishlist label,
+#formEditarWishlist label {
+    font-weight: bold;
+    margin-bottom: -5px; /* Acercar label al input */
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+#formWishlist input[type="text"],
+#formEditarWishlist input[type="text"],
+#formWishlist textarea,
+#formEditarWishlist textarea {
+    width: 100%;
+    padding: 12px; /* Un poco más de padding */
+    background-color: #2c2c2c; /* Fondo de input más oscuro */
+    border: 1px solid #555; /* Borde más sutil */
+    border-radius: 6px;
+    font-size: 1em;
+    color: whitesmoke; /* Color de texto del input */
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#formWishlist input[type="text"]:focus,
+#formEditarWishlist input[type="text"]:focus,
+#formWishlist textarea:focus,
+#formEditarWishlist textarea:focus {
+    border-color: #ffcc00; /* Borde amarillo al enfocar */
+    box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.3); /* Sombra sutil al enfocar */
+}
+
+#formWishlist textarea,
+#formEditarWishlist textarea {
+    resize: vertical; /* Permitir redimensionar verticalmente */
+    min-height: 80px;
+}
+
+/* Estilos para la sección de privacidad (común a ambos formularios) */
+.privacidadLista { /* Ya lo tenías, se puede refinar */
+    padding: 10px 0;
+    margin-top: 5px;
+    border-top: 1px solid #444; /* Separador sutil */
+    border-bottom: 1px solid #444;
+}
+
+.privacidadLista h3 {
+    font-size: 1em;
+    color: #e0e0e0; /* Color del subtítulo de privacidad */
+    margin-bottom: 10px;
+    text-align: left;
+}
+.privacidadLista section {
+    display: flex;
+    gap: 15px; /* Espacio entre opciones de radio */
+    justify-content: flex-start; /* Alinear a la izquierda */
+}
+.privacidadLista input[type="radio"] {
+    display: none; /* Ocultar radio original */
+}
+.privacidadLista label { /* Estilo para los labels de los radio */
+    background: #555;
+    color: #ddd;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-size: 0.9em;
+    font-weight: normal; /* Resetear bold si no se quiere */
+    border: 1px solid transparent;
+}
+.privacidadLista label:hover {
+    background: #666;
+}
+#formWishlist .privacidadLista input[type="radio"]:checked + label,
+#formEditarWishlist .privacidadLista input[type="radio"]:checked + label {
+    background-color: #ffcc00;
+    color: #333;
+    font-weight: bold;
+    border-color: #e6b800;
+}
+
+
+/* Botones de submit para los formularios de wishlist */
+#submitLista, /* Botón "Crear Lista" */
+#btnGuardarCambiosWishlist { /* Botón "Guardar Cambios" */
+    background-color: #ffcc00; /* Amarillo */
+    color: #333; /* Texto oscuro para contraste */
+    font-weight: bold;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 15px; /* Espacio arriba del botón */
+}
+
+#submitLista:hover,
+#btnGuardarCambiosWishlist:hover {
+    background-color: #e6b800; /* Amarillo más oscuro al pasar el mouse */
+    transform: translateY(-1px); /* Efecto sutil de elevación */
+}
+
+/* Estilos para la lista de productos DENTRO del popup de EDICIÓN */
+#listaProductosEditar {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    max-height: 150px; /* Altura máxima con scroll */
+    overflow-y: auto;
+    background-color: #2c2c2c; /* Fondo para la lista */
+    border-radius: 6px;
+    padding: 10px;
+}
+
+#listaProductosEditar li.producto-editar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid #444;
+    color: #ddd;
+    font-size: 0.9em;
+}
+#listaProductosEditar li.producto-editar:last-child {
+    border-bottom: none;
+}
+
+#listaProductosEditar li.producto-editar span {
+    flex-grow: 1; /* El nombre del producto ocupa el espacio disponible */
+}
+
+/* Estilo para el botón de eliminar producto de la wishlist (dentro del popup de edición) */
+.btn-eliminar-producto-de-wishlist {
+    background: none;
+    border: none;
+    color: #888; /* Color gris base */
+    font-size: 1.1em; /* Tamaño del ícono de basura */
+    cursor: pointer;
+    padding: 5px; /* Área de clic */
+    margin-left: 10px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.btn-eliminar-producto-de-wishlist:hover {
+    color: #ff4d4d; /* Rojo al pasar el mouse */
+    transform: scale(1.1); /* Efecto de zoom sutil */
+}
+.btn-eliminar-producto-de-wishlist i.fas.fa-trash {
+    pointer-events: none; /* Para que el clic se registre en el botón y no en el ícono */
+}
+
+
+/* Placeholder para cuando no hay productos en la lista de edición */
+#listaProductosEditar li.producto-editar-placeholder {
+    text-align: center;
+    color: #777;
+    padding: 15px;
+    font-style: italic;
+}
+
+
+/* ... (Estilos existentes para .wishlists, .lista, .headerLista, .pop-up-options, etc.) ... */
+/* Asegúrate que los estilos para el popup de opciones (.pop-up-options) y sus botones
+   (.btn-editar-lista, .btn-eliminar-lista) también estén definidos y se vean bien. */
+
+.pop-up-options {
+    position: absolute; /* Ya lo tenías */
+    background-color: #4f4f4f; /* Fondo un poco más claro que el contenido del popup */
+    border: 1px solid #333;
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    padding: 0; /* Quitar padding para que los botones ocupen todo */
+    z-index: 1001; /* Por encima del popup principal si es necesario */
+    display: none;
+    width: 160px; /* Ancho fijo para el menú de opciones */
+    overflow: hidden; /* Para que los botones redondeados se vean bien */
+}
+
+.pop-up-options .pop-up-content {
+    padding: 0; /* Quitar padding interno si los botones lo manejan */
+    background: none; /* Heredar o transparente */
+    box-shadow: none;
+    width: 100%;
+    text-align: left;
+}
+
+.pop-up-options .pop-up-content h3 {
+    font-size: 0.9em;
+    padding: 8px 12px;
+    margin: 0;
+    color: #ffcc00;
+    border-bottom: 1px solid #555;
+}
+
+.pop-up-options .pop-up-content button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    background-color: transparent;
+    border: none;
+    color: #ddd;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+    border-radius: 0; /* Sin bordes redondeados individuales */
+}
+.pop-up-options .pop-up-content button:not(:last-child) {
+    border-bottom: 1px solid #555; /* Separador entre botones */
+}
+
+.pop-up-options .pop-up-content button:hover {
+    background-color: #5f5f5f; /* Resaltar al pasar el mouse */
+    color: #fff;
+}
+
+.pop-up-options .pop-up-content .close.btnCerrarPopupOptions {
+    font-size: 20px; /* Más pequeño para el popup de opciones */
+    top: 5px;
+    right: 8px;
+    color: #888;
+}
+.pop-up-options .pop-up-content .close.btnCerrarPopupOptions:hover {
+    color: #ff4d4d;
+}
+
+
 
 /* Responsive */
 @media (max-width: 768px) {

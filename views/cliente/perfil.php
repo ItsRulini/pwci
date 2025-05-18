@@ -203,10 +203,10 @@ if (isset($_GET['error'])) {
                     <div class="privacidadLista">
                         <h3>Privacidad: </h3>
                         <section>
-                            <input id="privada" type="radio" name="listaPrivacidad" value="Privado">
+                            <input id="privada" type="radio" name="listaPrivacidad" value="Privada">
                             <label for="privada">Privada</label>
 
-                            <input id="publica" type="radio" name="listaPrivacidad" value="Público">
+                            <input id="publica" type="radio" name="listaPrivacidad" value="Publica">
                             <label for="publica">Pública</label>
                         </section>
                     </div>
@@ -220,24 +220,29 @@ if (isset($_GET['error'])) {
         <div id="popupEditarLista" class="popup-editar" style="display: none;">
             <div class="popup-editar-content">
                 <span class="close" id="btnCerrarEditarLista">&times;</span>
+                <h3>Editar Wishlist</h3>
 
-                <h3>Editar Lista</h3>
+                <form id="formEditarWishlist">
+                    <label for="editarNombreLista">Nombre:</label>
+                    <input type="text" id="editarNombreLista" name="editarNombreLista" placeholder="Nombre de la lista" required>
 
-                <div class="privacidadLista">
-                    <h3>Privacidad: </h3>
+                    <label for="editarDescripcionLista">Descripción:</label>
+                    <textarea id="editarDescripcionLista" name="editarDescripcionLista" placeholder="Descripción de la lista"></textarea>
 
-                    <section>
-                        <input id="privadaLista" type="radio" name="listaPrivacidad" value="Privado">
-                        <label for="privadaLista">Privada</label>
-                        <input id="publicaLista" type="radio" name="listaPrivacidad" value="Público">
-                        <label for="publicaLista">Pública</label>
-                    </section>
-                </div>
-
+                    <div class="privacidadLista">
+                        <h3>Privacidad: </h3>
+                        <section>
+                            <input id="editarPrivadaLista" type="radio" name="editarListaPrivacidad" value="Privada">
+                            <label for="editarPrivadaLista">Privada</label>
+                            <input id="editarPublicaLista" type="radio" name="editarListaPrivacidad" value="Publica">
+                            <label for="editarPublicaLista">Pública</label>
+                        </section>
+                    </div>
+                    <button type="submit" id="btnGuardarCambiosWishlist">Guardar Cambios</button>
+                </form>
                 <h4>Productos:</h4>
+                
                 <ul id="listaProductosEditar"></ul>
-
-                <button id="btnGuardarCambios">Guardar Cambios</button>
             </div>
         </div>
 

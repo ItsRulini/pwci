@@ -35,13 +35,49 @@ document.addEventListener("DOMContentLoaded", function () {
     const popupWishlistListasUl = document.getElementById("popupWishlistListasUl");
     const popupBtnAgregarWishlist = document.getElementById("popupBtnAgregarWishlist");
 
+    function cargarWishlistsParaPopup() {
+        if (!popupWishlistListasUl) return;
+        popupWishlistListasUl.innerHTML = '<li class="lista-placeholder">Cargando tus wishlists...</li>';
+
+        fetch('../../controllers/getMisWishlists.php') // Reutilizamos el controlador existente
+            .then(response => response.json())
+            .then(data => {
+                popupWishlistListasUl.innerHTML = ''; // Limpiar
+                if (data.success && data.wishlists.length > 0) {
+                    data.wishlists.forEach(wishlist => {
+                        const li = document.createElement("li");
+                        li.classList.add("lista"); // Clase para estilizar cada item de wishlist
+                        
+                        // Checkbox para seleccionar la wishlist
+                        // El label envuelve el input y el texto para mejor UX
+                        li.innerHTML = `
+                            <label>
+                                <input type="checkbox" name="wishlistSeleccionada" value="${wishlist.idLista}">
+                                ${escapeHtml(wishlist.nombre)} 
+                                <small>(${escapeHtml(wishlist.privacidad)})</small>
+                            </label>
+                        `;
+                        popupWishlistListasUl.appendChild(li);
+                    });
+                } else if (data.success && data.wishlists.length === 0) {
+                    popupWishlistListasUl.innerHTML = '<li class="lista-placeholder">No tienes wishlists. Puedes crear una desde tu perfil.</li>';
+                } else {
+                    popupWishlistListasUl.innerHTML = `<li class="lista-placeholder">Error: ${data.message || 'No se pudieron cargar tus wishlists.'}</li>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching wishlists para popup:', error);
+                if (popupWishlistListasUl) popupWishlistListasUl.innerHTML = '<li class="lista-placeholder">Error de conexión.</li>';
+            });
+    }
+
     // Lógica del popup de wishlist
     if (btnAbrirPopupWishlist && popupWishlist && btnCerrarPopupWishlist) {
         btnAbrirPopupWishlist.addEventListener("click", function (event) {
             event.stopPropagation(); // Evita que el clic se propague al window listener inmediatamente
             popupWishlist.classList.add("mostrar");
             // TODO: Aquí deberías llamar a una función para cargar las wishlists del usuario en popupWishlistListasUl
-            // Ejemplo: cargarWishlistsUsuario(); 
+            cargarWishlistsParaPopup(); 
         });
     }
     if (popupWishlist && btnCerrarPopupWishlist) {
@@ -65,6 +101,51 @@ document.addEventListener("DOMContentLoaded", function () {
          });
     }
     // La funcionalidad de "Agregar" del popup de wishlist se manejaría con un listener en popupBtnAgregarWishlist
+    // --- Event Listener para el botón "Agregar" del Popup de Wishlist ---
+    if (popupBtnAgregarWishlist) {
+        popupBtnAgregarWishlist.addEventListener("click", function() {
+            const checkboxesSeleccionados = popupWishlistListasUl.querySelectorAll('input[name="wishlistSeleccionada"]:checked');
+            const idListasSeleccionadas = [];
+            checkboxesSeleccionados.forEach(checkbox => {
+                idListasSeleccionadas.push(checkbox.value);
+            });
+
+            if (idListasSeleccionadas.length === 0) {
+                alert("Por favor, selecciona al menos una wishlist.");
+                return;
+            }
+
+            if (typeof ID_PRODUCTO_ACTUAL === 'undefined' || ID_PRODUCTO_ACTUAL <= 0) {
+                alert("Error: No se pudo identificar el producto actual.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('idProducto', ID_PRODUCTO_ACTUAL);
+            idListasSeleccionadas.forEach(idLista => {
+                formData.append('idListas[]', idLista); // Enviar como un array
+            });
+
+            fetch('../../controllers/agregarProductoWishlist.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || "Operación completada."); // El backend da un mensaje más detallado
+                if (data.success || (data.results && Object.values(data.results).some(r => r.status === 'ALREADY_EXISTS' || r.status === 'SUCCESS'))) {
+                    popupWishlist.classList.remove("mostrar");
+                    // Opcional: podrías querer recargar algo si la adición fue exitosa,
+                    // pero para wishlists no es tan crítico como para el carrito.
+                }
+                // console.log("Resultados detallados:", data.results); // Para depuración
+            })
+            .catch(error => {
+                console.error('Error al agregar producto a wishlists:', error);
+                alert('Ocurrió un error de conexión.');
+            });
+        });
+    }
 
 
     if (typeof ID_PRODUCTO_ACTUAL === 'undefined' || ID_PRODUCTO_ACTUAL <= 0) {
@@ -281,29 +362,4 @@ document.addEventListener("DOMContentLoaded", function () {
         cargarDetallesProducto();
         cargarComentarios();
     }
-    
-    // Lógica para la sección de calificación interactiva (si el usuario puede calificar desde esta página)
-    // Esta sección de tu JS original para las estrellas interactivas en "producto.php"
-    // se refería a #estrellas, que ahora es #productoEstrellasPromedio y es solo para display.
-    // Si quieres que el usuario CALIFIQUE desde aquí, necesitarías un NUEVO set de estrellas interactivas.
-    // Por ahora, la sección .calificacion solo muestra el promedio.
-    /*
-    const estrellasCalificar = document.querySelectorAll("#seccionProductoDetalle .calificacion .estrellas i"); // Ejemplo si tuvieras estrellas para input
-    let calificacionUsuarioActual = 0; // Para la calificación que el usuario está por dar
-
-    if (estrellasCalificar.length > 0) {
-        estrellasCalificar.forEach((estrella, index) => {
-            estrella.addEventListener("mouseover", () => {
-                // Lógica para iluminar estrellas al pasar el mouse
-            });
-            estrella.addEventListener("mouseout", () => {
-                // Lógica para restaurar estrellas
-            });
-            estrella.addEventListener("click", () => {
-                // Guardar calificacionUsuarioActual
-                // Potencialmente enviar al backend
-            });
-        });
-    }
-    */
 });
