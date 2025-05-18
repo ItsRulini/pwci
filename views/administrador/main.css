@@ -118,6 +118,10 @@
     pointer-events: none;
 }
 
+.card-container .no-products-message{
+    color: whitesmoke;
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
     .main-content {

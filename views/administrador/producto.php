@@ -73,10 +73,10 @@ $idProducto = (int) $_GET['idProducto']; // 👈
                 <p>$150 MXN</p>
                 <p>Descripción del producto</p>
 
-                <div class="buttons">
+                <!-- <div class="buttons">
                     <button class="card-button-approve" onclick="autorizarProducto(<?php echo $idProducto; ?>)"><i class="fas fa-check"></i></button>
                     <button class="card-button-disapprove" onclick="rechazarProducto(<?php echo $idProducto; ?>)"><i class="fas fa-times"></i></button>
-                </div>
+                </div> -->
             </div>
 
             <div class="info-seller">
