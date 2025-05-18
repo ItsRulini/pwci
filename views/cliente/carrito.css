@@ -190,6 +190,173 @@
     background-color: #444;
 }
 
+/* Botón Pagar en Efectivo */
+.btn-pagar-efectivo {
+    display: block;
+    width: 100%;
+    background-color: #28a745; /* Un color verde para efectivo */
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px; /* Espacio respecto al botón de PayPal o "Proceder al pago" */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center; /* Asegurar centrado del texto e ícono */
+}
+
+.btn-pagar-efectivo i {
+    margin-left: 8px;
+}
+
+.btn-pagar-efectivo:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Estilos para el Popup de Pago en Efectivo */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Overlay más oscuro */
+    z-index: 1040; /* Por encima de otros elementos */
+    display: none; /* Oculto por defecto */
+}
+
+.popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #3a3a3a; /* Fondo oscuro para el popup */
+    color: whitesmoke;
+    padding: 0; /* El padding se manejará en header, body, footer */
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 450px; /* Ancho máximo del popup */
+    z-index: 1050; /* Por encima del overlay */
+    display: none; /* Oculto por defecto */
+    flex-direction: column; /* Para organizar header, body, footer */
+}
+
+.popup-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #ffcc00; /* Título en amarillo */
+}
+
+.popup-close-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 5px;
+}
+.popup-close-btn:hover {
+    color: #fff;
+}
+
+.popup-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.popup-body p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.barcode-container {
+    background-color: #fff; /* Fondo blanco para el código de barras */
+    color: #333; /* Texto oscuro para el código */
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada para simular código */
+    font-size: 1.8em; /* Tamaño grande para el código */
+    letter-spacing: 2px; /* Espaciado entre caracteres */
+    border: 1px dashed #ccc;
+    min-height: 60px; /* Altura mínima */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-body strong { /* Para el total a pagar */
+    color: #ffcc00;
+}
+
+.btn-accion-popup { /* Botón "Completar Pago" */
+    background-color: #28a745; /* Verde */
+    color: white;
+    font-weight: bold;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+.btn-accion-popup:hover {
+    background-color: #218838;
+}
+
+.popup-footer {
+    padding: 10px 20px;
+    text-align: center;
+    border-top: 1px solid #555;
+    min-height: 20px; /* Para que el mensaje no haga saltar el layout */
+}
+
+.payment-message {
+    font-size: 0.9em;
+    font-style: italic;
+}
+.payment-message.success {
+    color: #28a745; /* Verde para éxito */
+}
+.payment-message.error, .payment-message.cancelled {
+    color: #dc3545; /* Rojo para error/cancelado */
+}
+
+/* Ajustes para el botón de PayPal si se usa junto con el de efectivo */
+#paypal-button-container {
+    margin-bottom: 10px; /* Espacio si ambos botones están visibles */
+}
+.btn-comprar { /* Botón "Proceder al pago" que podría ser el de PayPal */
+     background-color: #ffcc00; /* Azul PayPal (ejemplo) */
+     color: white;
+}
+.btn-comprar:hover {
+    background-color: #dfb50b;
+}
+
+/* Ocultar el botón de PayPal genérico si los botones de PayPal SDK están visibles */
+/* Esto es una suposición, el SDK de PayPal podría manejar esto automáticamente */
+/* #paypal-button-container:not(:empty) + .btn-comprar {
+    display: none; 
+} */
+
+
 
 /* Responsive */
 @media (max-width: 768px) {

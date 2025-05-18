@@ -22,7 +22,6 @@ $usuario = $_SESSION['usuario'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
@@ -47,114 +46,92 @@ $usuario = $_SESSION['usuario'];
         </ul>
     </nav>
 
-    <!-- Contenedor del Carrito -->
-    
     <section class="carrito-container">
         <h2 class="carrito-titulo">Mi Carrito</h2>
         
-        <!-- Lista de productos en el carrito -->
-        
         <div class="carrito">
             <ul class="contenido-carrito">
+                <!-- {/* */} -->
                 <li class="producto">
-                    <img src="../../multimedia/default/default.jpg" alt="Smartphone XYZ Pro">
+                    <img src="../../multimedia/default/default.jpg" alt="Producto Placeholder">
                     <div class="info">
-                        <span>Smartphone XYZ Pro</span>
-                        <p>$3,499 MXN</p>
-                        <div class="cantidad">
-                            <button type="button">-</button>
-                            <span>1</span>
-                            <button type="button">+</button>
-                        </div>
+                        <span>Cargando producto...</span>
+                        <p>...</p>
+                        <div class="cantidad"><span>1</span></div>
                     </div>
-                    <div class="acciones">
-                        <button class="eliminar-btn">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </li>
-                
-                <li class="producto">
-                    <img src="../../multimedia/default/default.jpg" alt="Audífonos Bluetooth">
-                    <div class="info">
-                        <span>Audífonos Bluetooth</span>
-                        <p>$899 MXN</p>
-                        <div class="cantidad">
-                            <button type="button">-</button>
-                            <span>2</span>
-                            <button type="button">+</button>
-                        </div>
-                    </div>
-                    <div class="acciones">
-                        <button class="eliminar-btn">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </li>
-                
-                <li class="producto">
-                    <img src="../../multimedia/default/default.jpg" alt="Smartwatch Sport">
-                    <div class="info">
-                        <span>Smartwatch Sport</span>
-                        <p>$2,199 MXN</p>
-                        <div class="cantidad">
-                            <button type="button">-</button>
-                            <span>1</span>
-                            <button type="button">+</button>
-                        </div>
-                    </div>
-                    <div class="acciones">
-                        <button class="eliminar-btn">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+                    <div class="acciones"><button class="eliminar-btn"><i class="fas fa-trash"></i></button></div>
                 </li>
             </ul>
             
             <div class="resumen-carrito">
                 <div class="linea-resumen">
                     <span>Subtotal</span>
-                    <span>$7,496 MXN</span>
+                    <span id="resumenSubtotal">$0.00 MXN</span>
                 </div>
                 <div class="linea-resumen">
                     <span>Envío</span>
-                    <span>$150 MXN</span>
+                    <span id="resumenEnvio">$0.00 MXN</span>
                 </div>
                 <div class="linea-resumen">
                     <span>Impuestos</span>
-                    <span>$1,224 MXN</span>
+                    <span id="resumenImpuestos">$0.00 MXN</span>
                 </div>
                 
                 <div class="linea-total">
                     <span>Total</span>
-                    <span>$8,870 MXN</span>
+                    <span id="resumenTotal">$0.00 MXN</span>
                 </div>
                 
                 <div class="acciones-carrito">
-                    <div id="paypal-button-container"></div>
-
-                    <button class="btn-comprar">
-                        Proceder al pago <i class="fas fa-arrow-right"></i>
+                    <!-- {/* */} -->
+                    <div id="paypal-button-container">
+                        <!-- {/* */} -->
+                    </div>
+                    
+                    <!-- {/* */} -->
+                    <button class="btn-comprar" id="btnProcederPagoPayPal">
+                        Pagar con PayPal <i class="fab fa-paypal"></i>
                     </button>
+
+                    <!-- {/* */} -->
+                    <button class="btn-pagar-efectivo" id="btnPagarEfectivo">
+                        Pagar en Efectivo <i class="fas fa-money-bill-wave"></i>
+                    </button>
+
                     <button class="clear-btn">
                         Vaciar carrito <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                
             </div>
         </div>
-
-        
-        
-        <!-- Si el carrito está vacío (descomentar y comentar el contenido anterior para mostrar esto)-->
         
         <div class="carrito-vacio" style="display: none;">
-            <i class="fas fa-shopping-cart" style="font-size: 50px; color: #ddd; margin-bottom: 20px;"></i>
+            <i class="fas fa-shopping-cart"></i>
             <p>Tu carrito está vacío</p>
             <a href="main.php" class="btn-seguir-comprando">Seguir comprando</a>
         </div>
-        
     </section>
+
+    <!-- {/* */} -->
+    <div class="popup-overlay" id="cashPaymentOverlay" style="display: none;"></div>
+    <div class="popup-container" id="cashPaymentPopup" style="display: none;">
+        <div class="popup-header">
+            <h2>Pago en Efectivo</h2>
+            <button class="popup-close-btn" id="closeCashPopupBtn">&times;</button>
+        </div>
+        <div class="popup-body">
+            <p>Por favor, realiza tu pago en la tienda de conveniencia más cercana utilizando el siguiente código de referencia:</p>
+            <div class="barcode-container" id="barcodeDisplay">
+                <!-- {/* */} -->
+                Cargando código...
+            </div>
+            <p>Total a pagar: <strong id="cashTotalAmount"></strong></p>
+            <button class="btn-accion-popup" id="btnConfirmarPagoEfectivo">Completar Pago</button>
+        </div>
+        <div class="popup-footer">
+            <p id="cashPaymentMessage" class="payment-message"></p>
+        </div>
+    </div>
 
     <script src="https://www.paypal.com/sdk/js?client-id=Adxi5Pt83dliN05vencduR0nFE9NnQtbHJTl6AG7-aaUCJRA63cJjlcFWJxvTcwk45QVZQ-ON0WWXgVw&currency=MXN"></script>
     <script src="carrito.js"></script>
