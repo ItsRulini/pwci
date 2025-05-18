@@ -1,0 +1,218 @@
+/* views/vendedor/producto.css */
+
+/* Estilos generales para el contenedor principal de la página del producto del vendedor */
+main {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-height: calc(100vh - 70px); /* 70px es un aproximado de la altura del navbar */
+}
+
+/* Sección principal que contiene todos los detalles del producto */
+.producto-detalle-vendedor {
+    background-color: #333; /* Fondo del contenedor del producto */
+    color: whitesmoke;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 900px; /* Ancho máximo para el contenido */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espacio entre secciones internas (categorías, multimedia, info) */
+}
+
+/* Estilos para la lista de categorías del producto */
+.categorias {
+    display: flex; /* Cambiado a flex para mejor control del wrap */
+    flex-wrap: wrap; /* Permitir que las categorías pasen a la siguiente línea */
+    gap: 10px;
+    padding: 0; /* Quitar padding por defecto de ul */
+    list-style: none;
+    margin-bottom: 15px; /* Espacio después de las categorías */
+    justify-content: center; /* Centrar las categorías si no ocupan todo el ancho */
+}
+
+.categoria {
+    background: #ffcc00;
+    padding: 8px 15px; /* Ajustar padding */
+    border-radius: 20px;
+    font-weight: bold;
+    color: #333; /* Texto oscuro para contraste con amarillo */
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* Contenedor de multimedia (imágenes y videos) */
+.multimedia {
+    display: flex;
+    overflow-x: auto; /* Permitir scroll horizontal si hay muchos elementos */
+    gap: 15px; /* Espacio entre imágenes/videos */
+    padding: 10px;
+    border-radius: 8px;
+    background: #222; /* Fondo ligeramente diferente para el carrusel */
+    border: 1px solid #444; /* Borde sutil */
+}
+
+.multimedia img,
+.multimedia video {
+    max-width: 280px; /* Ancho máximo por item */
+    max-height: 280px; /* Alto máximo para mantener proporción */
+    height: auto; /* Mantener proporción */
+    border-radius: 6px;
+    object-fit: cover; /* Asegurar que la imagen/video cubra el espacio sin distorsionarse */
+    border: 1px solid #4a4a4a;
+}
+
+.multimedia video {
+    width: 280px; /* Ancho fijo para videos para consistencia */
+}
+
+/* Sección de información del producto */
+.info {
+    padding: 15px;
+    background-color: #3a3a3a; /* Fondo ligeramente distinto para la info */
+    border-radius: 8px;
+    text-align: left; /* Alinear texto a la izquierda para mejor lectura */
+}
+
+.info h2 { /* Nombre del producto */
+    font-size: 1.8em;
+    color: #ffcc00; /* Nombre en amarillo */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.info p { /* Precio, descripción, tipo */
+    font-size: 1em;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+.info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Sección de gestión de stock */
+.stock-management {
+    background-color: #404040; /* Fondo distintivo para esta sección */
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+    border: 1px solid #555;
+}
+
+.stock-management h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #ffcc00;
+    font-size: 1.1em;
+}
+
+.stock-management p {
+    margin-bottom: 10px;
+    color: #e0e0e0;
+}
+
+.stock-management label {
+    margin-right: 8px;
+    color: #ccc;
+}
+
+.stock-management input[type="number"] {
+    width: 70px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #666;
+    background-color: #2c2c2c;
+    color: whitesmoke;
+    font-size: 1em;
+}
+
+.stock-management button {
+    padding: 8px 15px;
+    background-color: #ffcc00;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.stock-management button:hover {
+    background-color: #e6b800;
+}
+
+#stockUpdateMessage { /* Para mensajes de éxito/error de la actualización de stock */
+    font-size: 0.9em;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Información del estado del producto (aprobado/rechazado por admin) */
+.info-seller { /* Cambiado de .info-seller a .info-estado para más claridad */
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #aaa;
+    text-align: center;
+}
+.info-seller p {
+    margin: 0;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .producto-detalle-vendedor {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .info h2 {
+        font-size: 1.5em;
+    }
+
+    .multimedia img,
+    .multimedia video {
+        max-width: 220px; /* Reducir tamaño de multimedia en móviles */
+        max-height: 220px;
+    }
+    .multimedia video {
+        width: 220px;
+    }
+
+    .stock-management div { /* El div que contiene label, input y botón */
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .stock-management input[type="number"] {
+        width: 100%; /* Input de stock ocupa todo el ancho */
+    }
+    .stock-management button {
+        width: 100%; /* Botón de stock ocupa todo el ancho */
+    }
+}
+
+@media (max-width: 480px) {
+    .categorias {
+        justify-content: flex-start; /* Alinear categorías a la izquierda en móviles muy pequeños */
+    }
+    .categoria {
+        font-size: 0.8em;
+        padding: 6px 10px;
+    }
+    .info h2 {
+        font-size: 1.3em;
+    }
+    .info p {
+        font-size: 0.9em;
+    }
+    .stock-management h4 {
+        font-size: 1em;
+    }
+}

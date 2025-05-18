@@ -77,7 +77,7 @@
     margin-bottom: 15px;
 }
 
-.no-products-message {
+.card-container .no-products-message {
     text-align: center;
     color: #777;
     font-style: italic;

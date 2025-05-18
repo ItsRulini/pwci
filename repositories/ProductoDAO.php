@@ -397,6 +397,66 @@ class ProductoDAO {
             }
             return $productos;
         }
+
+        public function aumentarStockProducto($idProducto, $idVendedor, $cantidadAAgregar) {
+        $response = ['status' => 'FAIL_UNKNOWN', 'message' => 'Error desconocido al actualizar stock.', 'nuevoStock' => null];
+        
+        // Limpiar resultados previos de la conexión si es necesario
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        // El SP ya no tiene el parámetro OUT
+        $stmt = $this->conn->prepare("CALL spAumentarStockProducto(?, ?, ?)");
+        if (!$stmt) {
+            error_log("ProductoDAO::aumentarStockProducto - Error en prepare: " . $this->conn->error);
+            return ['status' => 'FAIL_PREPARE', 'message' => 'Error interno del servidor (prepare).', 'nuevoStock' => null];
+        }
+        
+        // Solo 3 parámetros IN
+        $stmt->bind_param("iii", $idProducto, $idVendedor, $cantidadAAgregar);
+
+        $executeSuccess = $stmt->execute();
+
+        if (!$executeSuccess) {
+            // Si execute() falla, $stmt->error debería tener el error de MySQL
+            error_log("ProductoDAO::aumentarStockProducto - Error en execute: " . $stmt->error . " | MySQLi conn error: " . $this->conn->error);
+            $error_message_from_stmt = $stmt->error;
+            $stmt->close();
+            // Limpiar la conexión después de un error
+            while ($this->conn->more_results() && $this->conn->next_result()) {
+                if ($res = $this->conn->store_result()) { $res->free(); }
+            }
+            return ['status' => 'FAIL_EXECUTE', 'message' => 'Error al ejecutar la actualización de stock: ' . $error_message_from_stmt, 'nuevoStock' => null];
+        }
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $spResponse = $result->fetch_assoc();
+            if ($spResponse) {
+                // Asegurarse que los campos esperados estén presentes
+                $response['status'] = $spResponse['status'] ?? 'FAIL_SP_RESPONSE_FORMAT';
+                $response['message'] = $spResponse['message'] ?? 'Respuesta incompleta del servidor.';
+                $response['nuevoStock'] = isset($spResponse['nuevoStock']) ? (int)$spResponse['nuevoStock'] : null;
+            } else {
+                 error_log("ProductoDAO::aumentarStockProducto - fetch_assoc devolvió null. El SP no retornó la fila esperada.");
+                 $response = ['status' => 'FAIL_FETCH', 'message' => 'No se obtuvo respuesta del procedimiento.', 'nuevoStock' => null];
+            }
+            $result->free();
+        } else {
+            // Esto podría pasar si el SP no hizo un SELECT o hubo un error después de execute
+            error_log("ProductoDAO::aumentarStockProducto - get_result() falló o no devolvió un resultset: " . $this->conn->error);
+            $response = ['status' => 'FAIL_GET_RESULT', 'message' => 'Error al obtener la respuesta del servidor.', 'nuevoStock' => null];
+        }
+        
+        $stmt->close();
+        // Limpiar cualquier otro conjunto de resultados
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res_extra = $this->conn->store_result()) { $res_extra->free(); }
+        }
+        
+        return $response;
+    }
 }
 
 ?>
