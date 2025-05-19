@@ -121,49 +121,44 @@ class TransaccionDAO {
      */
     public function obtenerProductosDeCompraParaCalificar($idTransaccion, $idUsuario) {
         $productos = [];
-        // Limpiar resultados previos
-        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        while ($this->conn->more_results() && $this->conn->next_result()) { 
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
 
-        // Este SP es similar a una parte de spObtenerHistorialComprasUsuario pero para una sola transacción.
-        // Podrías crear un SP spObtenerProductosDeTransaccion(IN p_idTransaccion INT, IN p_idUsuario INT)
-        $query = "
-            SELECT
-                p.idProducto,
-                p.nombre AS nombreProducto,
-                lp.precioUnitarioCompra AS precioPagado,
-                GROUP_CONCAT(DISTINCT cat.nombre SEPARATOR ', ') AS categoriasProducto,
-                (SELECT cal.calificacion FROM Calificacion cal WHERE cal.idUsuario = l.idUsuario AND cal.idProducto = p.idProducto ORDER BY cal.idCalifacion DESC LIMIT 1) AS calificacionActual,
-                (SELECT com.comentario FROM Comentario com WHERE com.idUsuario = l.idUsuario AND com.idProducto = p.idProducto ORDER BY com.idComentario DESC LIMIT 1) AS comentarioActual
-            FROM Lista_Producto lp
-            INNER JOIN Producto p ON lp.idProducto = p.idProducto
-            INNER JOIN Lista l ON lp.idLista = l.idLista
-            LEFT JOIN Categoria_Producto cp ON p.idProducto = cp.idProducto
-            LEFT JOIN Categoria cat ON cp.idCategoria = cat.idCategoria
-            WHERE lp.idLista = ? AND l.idUsuario = ? AND l.tipo = 'Carrito' AND l.estatusCompra = TRUE
-            GROUP BY p.idProducto, p.nombre, lp.precioUnitarioCompra, l.idUsuario
-            ORDER BY p.nombre ASC;
-        ";
-        
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare("CALL spObtenerProductosDeCompraParaCalificar(?, ?)");
         if (!$stmt) {
             error_log("TransaccionDAO::obtenerProductosDeCompraParaCalificar - Error en prepare: " . $this->conn->error);
-            return $productos;
+            return $productos; // Devuelve array vacío en error de preparación
         }
+        
         $stmt->bind_param("ii", $idTransaccion, $idUsuario);
+        
         if (!$stmt->execute()) {
             error_log("TransaccionDAO::obtenerProductosDeCompraParaCalificar - Error en execute: " . $stmt->error);
             $stmt->close();
-            return $productos;
+            return $productos; // Devuelve array vacío en error de ejecución
         }
+        
         $resultado = $stmt->get_result();
         if($resultado){
             while ($fila = $resultado->fetch_assoc()) {
-                $productos[] = $fila;
+                // Si el SP devuelve la fila de "error" (nombreProducto con mensaje), no la agregamos como producto válido.
+                if (isset($fila['idProducto']) && $fila['idProducto'] !== null) {
+                    $productos[] = $fila;
+                } else {
+                    // Podrías loguear el mensaje de error del SP aquí si lo deseas
+                    error_log("SP spObtenerProductosDeCompraParaCalificar devolvió: " . ($fila['nombreProducto'] ?? 'Error desconocido del SP'));
+                }
             }
             $resultado->free();
+        } else {
+            error_log("TransaccionDAO::obtenerProductosDeCompraParaCalificar - get_result() falló: " . $this->conn->error);
         }
+        
         $stmt->close();
-        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        while ($this->conn->more_results() && $this->conn->next_result()) { 
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
         return $productos;
     }
 
