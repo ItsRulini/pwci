@@ -1,13 +1,8 @@
 <?php
-// Al inicio de tus archivos perfil.php (ej. views/cliente/perfil.php)
-require_once '../../models/Usuario.php'; // o la ruta correcta
+require_once '../../models/Usuario.php';
+require_once '../../auth/auth.php'; // Incluye session_start() y define $usuario
 
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: ../index.php");
-    exit();
-}
-$usuario = $_SESSION['usuario'];
+requireRole(['Vendedor']); // Asegurar que solo Vendedores accedan
 
 $successMessage = '';
 $errorMessage = '';
@@ -25,22 +20,30 @@ if (isset($_GET['error'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
-
+    <title>Perfil de Vendedor</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../administrador/main.css">
     <link rel="stylesheet" href="perfil.css">
+    <style>
+        .validation-message { display: block; font-size: 0.85em; margin-top: -5px; margin-bottom: 10px; min-height: 1.2em; /* Para evitar saltos de layout */}
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+        .input-error { border-color: #dc3545 !important; box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important; }
+        .input-success { border-color: #28a745 !important; box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important; }
+        .form-message { padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center; }
+        .success-message-global { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error-message-global { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        /* Estilo para botón deshabilitado */
+        #submitPerfil:disabled { background-color: #6c757d; border-color: #6c757d; cursor: not-allowed; }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="main.php" class="logo-link">
             <h1 class="logo">Papu Tienda</h1>
         </a>
-
         <ul class="nav-links">
             <li><a href="perfil.php">Perfil</a></li>
             <li><a href="social.php">Social</a></li>
@@ -51,45 +54,59 @@ if (isset($_GET['error'])) {
     </nav>
 
     <?php if ($successMessage): ?>
-        <div style="color: green; text-align: center; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
-            <?php echo $successMessage; ?>
-        </div>
+        <div class="form-message success-message-global"><?php echo $successMessage; ?></div>
     <?php endif; ?>
     <?php if ($errorMessage): ?>
-        <div style="color: red; text-align: center; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 15px;">
-            <?php echo $errorMessage; ?>
-        </div>
+        <div class="form-message error-message-global"><?php echo $errorMessage; ?></div>
     <?php endif; ?>
 
     <section>
         <div class="infoGeneral">
-            <h2>Perfil de <?php echo strtolower($usuario->getRol()); ?></h2>
+            <h2>Perfil de Vendedor</h2>
 
             <form id="formPerfil" action="../../controllers/actualizarUsuario.php" method="POST" enctype="multipart/form-data">
+                <label for="email" style="color: whitesmoke">Correo Electrónico:</label>
                 <input type="email" id="email" name="email" placeholder="Correo" value="<?php echo htmlspecialchars($usuario->getEmail()); ?>" required>
+                <span class="validation-message" id="emailValidationMessage"></span>
+
+                <label for="usuario" style="color: whitesmoke">Nombre de Usuario:</label>
                 <input type="text" id="usuario" name="usuario" placeholder="Usuario" value="<?php echo htmlspecialchars($usuario->getNombreUsuario()); ?>" required>
-                <input type="password" id="password" name="password" placeholder="Contraseña" value="<?php echo htmlspecialchars($usuario->getContraseña());?>" required>
+                <span class="validation-message" id="usuarioValidationMessage"></span>
+
+                <label for="password" style="color: whitesmoke">Nueva Contraseña:</label>
+                <input type="password" id="password" name="password" placeholder="Dejar vacío para no cambiar">
+                <span class="validation-message" id="passwordValidationMessage"></span>
                 
                 <?php
-                    $foto = "../../multimedia/default/default.jpg"; // Foto por defecto
+                    $foto = "../../multimedia/default/default.jpg"; 
                     if ($usuario->getFotoAvatar() != null) {
                         $rutaFotoReal = "../../multimedia/imagenPerfil/" . $usuario->getFotoAvatar();
-                        if (file_exists($rutaFotoReal)) { // Verifica si el archivo realmente existe
+                        if (file_exists($rutaFotoReal)) { 
                             $foto = $rutaFotoReal;
                         }
                     }
                 ?>
-
                 <img class="ImageLoaded" src="<?php echo htmlspecialchars($foto); ?>?t=<?php echo time(); ?>" id="profile-image" alt="Avatar">
-                
-                <label id="image" for="input-file">Elige una imagen</label>
-                <input type="file" name="avatar" accept="image/*" id="input-file">
+                <label id="image" for="input-file" class="btn-choose-image">Elige una imagen</label>
+                <input type="file" name="avatar" accept="image/*" id="input-file" style="display:none;">
             
+                <label for="nombres" style="color: whitesmoke">Nombres:</label>
                 <input type="text" id="nombres" name="nombres" placeholder="Nombres" value="<?php echo htmlspecialchars($usuario->getNombres()); ?>" required>
+                
+                <label for="paterno" style="color: whitesmoke">Apellido Paterno:</label>
                 <input type="text" id="paterno" name="paterno" placeholder="Apellido Paterno" value="<?php echo htmlspecialchars($usuario->getPaterno()); ?>" required>
+
+                <label for="materno" style="color: whitesmoke">Apellido Materno:</label>
                 <input type="text" id="materno" name="materno" placeholder="Apellido Materno" value="<?php echo htmlspecialchars($usuario->getMaterno()); ?>" required>
                 
+                <label for="nacimiento" style="color: whitesmoke">Fecha de Nacimiento:</label>
                 <input type="date" name="nacimiento" id="nacimiento" value="<?php echo htmlspecialchars($usuario->getFechaNacimiento()); ?>" required>
+                <span class="validation-message" id="nacimientoValidationMessage"></span>
+            
+                <!-- {/* */}
+                {/* */} -->
+                <input type="hidden" name="privacidad" value="Publico">
+
 
                 <input type="submit" id="submitPerfil" value="Guardar cambios">
             </form>
@@ -99,47 +116,27 @@ if (isset($_GET['error'])) {
     <div class="pubs-content">
         <section class="pubsection">
             <h2 class="section-title">Solicitudes pendientes</h2>
-            <div class="card-container">
-
-                <div class="card">
-                    <img src="../../multimedia/default/default.jpg" alt="Ejemplo de producto" class="card-image">
-                    <h3 class="card-title">Nombre del producto</h3>
-                    <p class="card-description">Descripción del producto.</p>  
-                    <p class="card-price">$100 MXN</p>
-                    <button class="card-button-ver-mas">Ver más</button>
-                </div>
+            <div class="card-container" id="pendientesContainer">
+                <!-- {/* */} -->
             </div>
         </section>
 
         <section class="pubsection">
-            <h2 class="section-title">Solicitudes aprobadas</h2>
-            <div class="card-container">
-
-                <div class="card">
-                    <img src="../../multimedia/default/default.jpg" alt="Ejemplo de producto" class="card-image">
-                    <h3 class="card-title">Nombre del producto</h3>
-                    <p class="card-description">Descripción del producto.</p>  
-                    <p class="card-price">$100 MXN</p>
-                    <button class="card-button-ver-mas">Ver más</button>
-                </div>
+            <h2 class="section-title">Publicaciones aprobadas</h2>
+            <div class="card-container" id="aprobadosContainer">
+                <!-- {/* */} -->
             </div>
         </section>
 
         <section class="pubsection">
             <h2 class="section-title">Solicitudes rechazadas</h2>
-            <div class="card-container">
-
-                <div class="card">
-                    <img src="../../multimedia/default/default.jpg" alt="Ejemplo de producto" class="card-image">
-                    <h3 class="card-title">Nombre del producto</h3>
-                    <p class="card-description">Descripción del producto.</p>  
-                    <p class="card-price">$100 MXN</p>
-                    <button class="card-button-ver-mas">Ver más</button>
-                </div>
+            <div class="card-container" id="rechazadosContainer">
+                 <!-- {/* */} -->
             </div>
         </section>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="perfil.js"></script>
 </body>
 </html>

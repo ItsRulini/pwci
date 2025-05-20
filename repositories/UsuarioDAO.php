@@ -108,48 +108,114 @@ class UsuarioDAO
         return false;
     }
 
-    public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento): bool
-    {
-        try {
-            $sql = "CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->conn->prepare($sql);
+    public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento, $privacidad, $nuevaContraseña = null) {
+        // Limpiar resultados previos
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
 
-            if ($stmt === false) {
-                error_log("Error en la preparación de spUpdateUsuario: " . $this->conn->error);
-                return false;
-            }
-
-            $stmt->bind_param(
-                "isssssss", // i para integer (idUsuario), s para strings
-                $idUsuario,
-                $nombreUsuario,
-                $email,
-                $nombres,
-                $paterno,
-                $materno,
-                $fotoAvatar, // Este es el nombre del archivo de la imagen
-                $fechaNacimiento
-            );
-
-            if ($stmt->execute()) {
-                $stmt->close();
-                // Limpiar cualquier resultado múltiple pendiente si el SP los genera
-                while ($this->conn->more_results() && $this->conn->next_result()) {
-                    // Descartar resultados adicionales
-                }
-                return true;
-            } else {
-                error_log("Error en la ejecución de spUpdateUsuario: " . $stmt->error);
-                $stmt->close();
-                return false;
-            }
-        } catch (mysqli_sql_exception $e) {
-            error_log("Excepción en actualizarUsuario: " . $e->getMessage());
+        $stmt = $this->conn->prepare("CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log("UsuarioDAO::actualizarUsuario - Error en prepare: " . $this->conn->error);
+            return false; // O un array con error
+        }
+        // Tipos: i, s, s, s, s, s, s, s, s, s
+        $stmt->bind_param("isssssssss", $idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento, $privacidad, $nuevaContraseña);
+        
+        $executeSuccess = $stmt->execute();
+        
+        if (!$executeSuccess) {
+            error_log("UsuarioDAO::actualizarUsuario - Error en execute: " . $stmt->error);
+            $stmt->close();
             return false;
         }
-        // Asegurarse de que siempre se retorne un booleano en caso de flujos inesperados
-        //return false;
+
+        // El SP ahora devuelve un SELECT con status y message
+        $result = $stmt->get_result();
+        $response = null;
+        if ($result) {
+            $response = $result->fetch_assoc();
+            $result->free();
+        }
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) {
+            if ($res = $this->conn->store_result()) { $res->free(); }
+        }
+
+        // Devolver true si el SP indicó SUCCESS, incluso si no hubo cambios (SUCCESS_NO_CHANGE)
+        return ($response && isset($response['status']) && strpos($response['status'], 'SUCCESS') !== false);
     }
+
+    // Necesitas estos métodos para la validación AJAX si no los tienes ya
+    // y que puedan ignorar el ID del usuario actual
+
+    public function validarEmailExistente($email, $idUsuarioActualAIgnorar = 0) {
+        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        $stmt = $this->conn->prepare("SELECT idUsuario FROM Usuario WHERE email = ? AND idUsuario != ?");
+        $stmt->bind_param("si", $email, $idUsuarioActualAIgnorar);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existe = $result->num_rows > 0;
+        $result->free();
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        return $existe; // true si existe (y no es el usuario actual), false si no
+    }
+
+    public function validarNombreUsuarioExistente($nombreUsuario, $idUsuarioActualAIgnorar = 0) {
+        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        $stmt = $this->conn->prepare("SELECT idUsuario FROM Usuario WHERE nombreUsuario = ? AND idUsuario != ?");
+        $stmt->bind_param("si", $nombreUsuario, $idUsuarioActualAIgnorar);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existe = $result->num_rows > 0;
+        $result->free();
+        $stmt->close();
+        while ($this->conn->more_results() && $this->conn->next_result()) { if ($res = $this->conn->store_result()) { $res->free(); }}
+        return $existe; // true si existe (y no es el usuario actual), false si no
+    }
+    // public function actualizarUsuario($idUsuario, $nombreUsuario, $email, $nombres, $paterno, $materno, $fotoAvatar, $fechaNacimiento): bool
+    // {
+    //     try {
+    //         $sql = "CALL spUpdateUsuario(?, ?, ?, ?, ?, ?, ?, ?)";
+    //         $stmt = $this->conn->prepare($sql);
+
+    //         if ($stmt === false) {
+    //             error_log("Error en la preparación de spUpdateUsuario: " . $this->conn->error);
+    //             return false;
+    //         }
+
+    //         $stmt->bind_param(
+    //             "isssssss", // i para integer (idUsuario), s para strings
+    //             $idUsuario,
+    //             $nombreUsuario,
+    //             $email,
+    //             $nombres,
+    //             $paterno,
+    //             $materno,
+    //             $fotoAvatar, // Este es el nombre del archivo de la imagen
+    //             $fechaNacimiento
+    //         );
+
+    //         if ($stmt->execute()) {
+    //             $stmt->close();
+    //             // Limpiar cualquier resultado múltiple pendiente si el SP los genera
+    //             while ($this->conn->more_results() && $this->conn->next_result()) {
+    //                 // Descartar resultados adicionales
+    //             }
+    //             return true;
+    //         } else {
+    //             error_log("Error en la ejecución de spUpdateUsuario: " . $stmt->error);
+    //             $stmt->close();
+    //             return false;
+    //         }
+    //     } catch (mysqli_sql_exception $e) {
+    //         error_log("Excepción en actualizarUsuario: " . $e->getMessage());
+    //         return false;
+    //     }
+    //     // Asegurarse de que siempre se retorne un booleano en caso de flujos inesperados
+    //     //return false;
+    // }
 
     public function validarCorreo($email): bool
     {

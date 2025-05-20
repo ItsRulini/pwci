@@ -1,19 +1,276 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // ... (selectores y código existente de la Iteración 2.2) ...
-    const ulListas = document.querySelector(".wishlists .listas");
+// views/cliente/perfil.js (o el perfil.js del rol correspondiente)
+
+$(document).ready(function() {
+    // --- SELECTORES DE ELEMENTOS DEL FORMULARIO ---
+    const formPerfil = $('#formPerfil');
+    const emailInput = $('#email');
+    const usuarioInput = $('#usuario');
+    const passwordInput = $('#password');
+    const nacimientoInput = $('#nacimiento');
+    const submitButton = $('#submitPerfil');
+
+    // --- SELECTORES DE MENSAJES DE VALIDACIÓN ---
+    const emailValidationMessage = $('#emailValidationMessage');
+    const usuarioValidationMessage = $('#usuarioValidationMessage');
+    const passwordValidationMessage = $('#passwordValidationMessage');
+    const nacimientoValidationMessage = $('#nacimientoValidationMessage');
+
+    // --- ESTADO DE VALIDACIÓN GLOBAL ---
+    let isFormValid = {
+        email: emailInput.val() ? true : false, // Asumir válido si ya tiene valor al cargar (se revalidará al cambiar)
+        usuario: usuarioInput.val() ? true : false,
+        password: true, // Contraseña es opcional, válida si está vacía o cumple criterios
+        nacimiento: nacimientoInput.val() ? true : false
+    };
+    
+    // Guardar valores originales para email y usuario (para no validar contra sí mismo innecesariamente)
+    const originalEmail = emailInput.val();
+    const originalUsuario = usuarioInput.val();
+
+    function updateSubmitButtonState() {
+        // Habilitar botón solo si todos los campos requeridos son válidos
+        if (isFormValid.email && isFormValid.usuario && isFormValid.password && isFormValid.nacimiento) {
+            submitButton.prop('disabled', false).removeClass('disabled-button-style'); // Asume que tienes un estilo para deshabilitado
+        } else {
+            submitButton.prop('disabled', true).addClass('disabled-button-style');
+        }
+    }
+
+    // --- FUNCIONES DE VALIDACIÓN INDIVIDUALES ---
+
+    // 1. Validar Email (Existencia)
+    emailInput.on('input blur', function() {
+        const email = $(this).val().trim();
+        emailValidationMessage.text('').removeClass('error success');
+        $(this).removeClass('input-error input-success');
+
+        if (email === '') {
+            emailValidationMessage.text('El correo es obligatorio.').addClass('error');
+            isFormValid.email = false;
+            updateSubmitButtonState();
+            return;
+        }
+        // Simple validación de formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            emailValidationMessage.text('Formato de correo no válido.').addClass('error');
+            $(this).addClass('input-error');
+            isFormValid.email = false;
+            updateSubmitButtonState();
+            return;
+        }
+
+        if (email === originalEmail) { // Si es el mismo email original, no hacer AJAX
+            isFormValid.email = true;
+            updateSubmitButtonState();
+            return;
+        }
+
+        // AJAX para validar existencia (solo si es diferente al original)
+        $.ajax({
+            url: '../../controllers/validarEmailExistenteAjax.php', // Ajusta ruta si es necesario
+            type: 'GET',
+            data: { email: email },
+            dataType: 'json',
+            success: function(response) {
+                if (response.valid) {
+                    emailValidationMessage.text('Correo disponible.').addClass('success');
+                    emailInput.addClass('input-success');
+                    isFormValid.email = true;
+                } else {
+                    emailValidationMessage.text(response.message || 'El correo ya está en uso.').addClass('error');
+                    emailInput.addClass('input-error');
+                    isFormValid.email = false;
+                }
+                updateSubmitButtonState();
+            },
+            error: function() {
+                emailValidationMessage.text('Error al validar correo. Intenta de nuevo.').addClass('error');
+                emailInput.addClass('input-error');
+                isFormValid.email = false;
+                updateSubmitButtonState();
+            }
+        });
+    });
+
+    // 2. Validar Nombre de Usuario (Existencia y Longitud)
+    usuarioInput.on('input blur', function() {
+        const nombreUsuario = $(this).val().trim();
+        usuarioValidationMessage.text('').removeClass('error success');
+        $(this).removeClass('input-error input-success');
+
+        if (nombreUsuario === '') {
+            usuarioValidationMessage.text('El nombre de usuario es obligatorio.').addClass('error');
+            isFormValid.usuario = false;
+            updateSubmitButtonState();
+            return;
+        }
+
+        if (nombreUsuario.length < 3) {
+            usuarioValidationMessage.text('El nombre de usuario debe tener al menos 3 caracteres.').addClass('error');
+            $(this).addClass('input-error');
+            isFormValid.usuario = false;
+            updateSubmitButtonState();
+            return;
+        }
+        
+        if (nombreUsuario === originalUsuario) { // Si es el mismo usuario original, no hacer AJAX
+             isFormValid.usuario = true;
+             updateSubmitButtonState();
+             return;
+        }
+
+        // AJAX para validar existencia (solo si es diferente al original)
+        $.ajax({
+            url: '../../controllers/validarUsuarioExistenteAjax.php', // Ajusta ruta si es necesario
+            type: 'GET',
+            data: { usuario: nombreUsuario }, // El controlador espera 'usuario'
+            dataType: 'json',
+            success: function(response) {
+                if (response.valid) {
+                    usuarioValidationMessage.text('Nombre de usuario disponible.').addClass('success');
+                    usuarioInput.addClass('input-success');
+                    isFormValid.usuario = true;
+                } else {
+                    usuarioValidationMessage.text(response.message || 'El nombre de usuario ya está en uso.').addClass('error');
+                    usuarioInput.addClass('input-error');
+                    isFormValid.usuario = false;
+                }
+                updateSubmitButtonState();
+            },
+            error: function() {
+                usuarioValidationMessage.text('Error al validar usuario. Intenta de nuevo.').addClass('error');
+                usuarioInput.addClass('input-error');
+                isFormValid.usuario = false;
+                updateSubmitButtonState();
+            }
+        });
+    });
+
+    // 3. Validar Contraseña (Complejidad)
+    passwordInput.on('input blur', function() {
+        const password = $(this).val(); // No trim, espacios pueden ser parte de la contraseña
+        passwordValidationMessage.text('').removeClass('error success');
+        $(this).removeClass('input-error input-success');
+
+        if (password === '') { // Contraseña es opcional para actualización
+            isFormValid.password = true;
+            updateSubmitButtonState();
+            return;
+        }
+
+        let errors = [];
+        if (password.length < 8) {
+            errors.push("Debe tener al menos 8 caracteres.");
+        }
+        if (!/[A-Z]/.test(password)) {
+            errors.push("Debe contener al menos una mayúscula.");
+        }
+        if (!/[a-z]/.test(password)) {
+            errors.push("Debe contener al menos una minúscula.");
+        }
+        if (!/[0-9]/.test(password)) {
+            errors.push("Debe contener al menos un número.");
+        }
+        if (!/[^A-Za-z0-9]/.test(password)) { // Excluye la ñ si es necesario con un regex más específico
+            errors.push("Debe contener al menos un carácter especial.");
+        }
+        // Regex que excluye la ñ como carácter especial:
+        const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+        if (!specialCharRegex.test(password)) {
+            errors.push("Debe contener al menos un carácter especial (ej. !@#$%).");
+        }
+
+
+        if (errors.length > 0) {
+            passwordValidationMessage.html(errors.join('<br>')).addClass('error');
+            $(this).addClass('input-error');
+            isFormValid.password = false;
+        } else {
+            passwordValidationMessage.text('Contraseña válida.').addClass('success');
+            $(this).addClass('input-success');
+            isFormValid.password = true;
+        }
+        updateSubmitButtonState();
+    });
+
+    // 4. Validar Fecha de Nacimiento
+    nacimientoInput.on('change blur', function() {
+        const fechaNacimientoStr = $(this).val();
+        nacimientoValidationMessage.text('').removeClass('error success');
+        $(this).removeClass('input-error input-success');
+
+        if (!fechaNacimientoStr) {
+            nacimientoValidationMessage.text('La fecha de nacimiento es obligatoria.').addClass('error');
+            isFormValid.nacimiento = false;
+            updateSubmitButtonState();
+            return;
+        }
+
+        const fechaNacimiento = new Date(fechaNacimientoStr + "T00:00:00"); // Asegurar que se interprete como local
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); // Poner la hora a cero para comparar solo fechas
+
+        if (fechaNacimiento >= hoy) {
+            nacimientoValidationMessage.text('La fecha de nacimiento no puede ser hoy ni una fecha futura.').addClass('error');
+            $(this).addClass('input-error');
+            isFormValid.nacimiento = false;
+        } else {
+            // Aquí podrías añadir validación de edad mínima si es necesario en el futuro.
+            nacimientoValidationMessage.text('Fecha válida.').addClass('success');
+            $(this).addClass('input-success');
+            isFormValid.nacimiento = true;
+        }
+        updateSubmitButtonState();
+    });
+
+    // --- MANEJO DEL SUBMIT DEL FORMULARIO ---
+    formPerfil.on('submit', function(event) {
+        // Re-validar todos los campos por si acaso antes del submit
+        emailInput.trigger('blur');
+        usuarioInput.trigger('blur');
+        passwordInput.trigger('blur'); // Validar contraseña si se ha escrito algo
+        nacimientoInput.trigger('blur');
+
+        if (!isFormValid.email || !isFormValid.usuario || !isFormValid.password || !isFormValid.nacimiento) {
+            event.preventDefault(); // Detener envío si hay errores
+            alert('Por favor, corrige los errores en el formulario antes de guardar.');
+        }
+        // Si todo es válido, el formulario se enviará normalmente.
+    });
+
+    // --- LÓGICA PARA CARGA DE IMAGEN (código existente) ---
+    const inputFileDisplay = document.getElementById("input-file");
+    if (inputFileDisplay) {
+        inputFileDisplay.addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profileImage = document.getElementById("profile-image");
+                    if (profileImage) profileImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // --- LÓGICA PARA WISHLISTS (si este es el perfil del cliente) ---
+    // ... (Tu código existente para manejar popups de wishlists, cargar wishlists, etc.)
+    // ... (Este código debe permanecer aquí si es el perfil.js del cliente)
+    // const btnAbrirPopupCrear = document.getElementById("btnAbrirPopup"); 
+    // const popupCrearWishlist = document.getElementById("popup"); 
+    // const btnCerrarPopupCrear = document.getElementById("btnCerrarPopup"); 
+    const formWishlistEl = document.getElementById("formWishlist"); // Renombrado para evitar conflicto con la variable formWishlist de jQuery
+    const ulListas = document.querySelector(".wishlists .listas"); 
+
     const popupEditarLista = document.getElementById("popupEditarLista");
     const btnCerrarEditarLista = document.getElementById("btnCerrarEditarLista");
-    const formEditarWishlist = document.getElementById("formEditarWishlist");
-    // Contenedor para los productos dentro del popup de edición
-    const ulProductosEditar = document.getElementById("listaProductosEditar"); 
+    const formEditarWishlistEl = document.getElementById("formEditarWishlist");
+    const ulProductosEditar = document.getElementById("listaProductosEditar");
 
-    // --- Funciones de Carga y Renderizado (cargarYRenderizarWishlists, cargarProductosDeWishlist) ---
-    // Estas funciones ya las tienes de la iteración anterior. Asegúrate que estén aquí.
-    // ... (pegar aquí las funciones cargarYRenderizarWishlists y cargarProductosDeWishlist de la respuesta anterior)
-
-    /**
-     * Carga y renderiza las wishlists del usuario.
-     */
+    // (Aquí irían tus funciones cargarYRenderizarWishlists, cargarProductosDeWishlist, etc.)
+    // (Y los listeners para los popups de wishlist)
     function cargarYRenderizarWishlists() {
         if (!ulListas) return;
         ulListas.innerHTML = '<li>Cargando tus wishlists...</li>';
@@ -119,11 +376,11 @@ document.addEventListener("DOMContentLoaded", function () {
      * Abre el popup para editar una wishlist, poblando sus campos y productos.
      */
     function abrirPopupEditarWishlist(idLista, nombre, descripcion, privacidad) {
-        if (popupEditarLista && formEditarWishlist && ulProductosEditar) {
+        if (popupEditarLista && formEditarWishlistEl && ulProductosEditar) {
             // Poblar detalles de la lista
-            formEditarWishlist.querySelector('#editarNombreLista').value = nombre;
-            formEditarWishlist.querySelector('#editarDescripcionLista').value = descripcion;
-            const radiosPrivacidad = formEditarWishlist.querySelectorAll('input[name="editarListaPrivacidad"]');
+            formEditarWishlistEl.querySelector('#editarNombreLista').value = nombre;
+            formEditarWishlistEl.querySelector('#editarDescripcionLista').value = descripcion;
+            const radiosPrivacidad = formEditarWishlistEl.querySelectorAll('input[name="editarListaPrivacidad"]');
             radiosPrivacidad.forEach(radio => {
                 radio.checked = (radio.value === privacidad);
             });
@@ -232,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnAbrirPopupCrear = document.getElementById("btnAbrirPopup");
     const popupCrearWishlist = document.getElementById("popup");
     const btnCerrarPopupCrear = document.getElementById("btnCerrarPopup");
-    const formWishlist = document.getElementById("formWishlist");
+    //const formWishlist = document.getElementById("formWishlist");
     // const ulListas = document.querySelector(".wishlists .listas"); // Ya definido arriba
 
     // const popupEditarLista = document.getElementById("popupEditarLista"); // Ya definido arriba
@@ -244,9 +501,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnAbrirPopupCrear && popupCrearWishlist) {
         btnAbrirPopupCrear.addEventListener("click", function() {
             popupCrearWishlist.style.display = "flex";
-            if(formWishlist) {
-                formWishlist.reset(); 
-                const radiosPrivacidad = formWishlist.querySelectorAll('input[name="listaPrivacidad"]');
+            if(formWishlistEl) {
+                formWishlistEl.reset(); 
+                const radiosPrivacidad = formWishlistEl.querySelectorAll('input[name="listaPrivacidad"]');
                 radiosPrivacidad.forEach(radio => radio.checked = false);
             }
         });
@@ -265,15 +522,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Manejar envío del Formulario para Crear Wishlist
-    if (formWishlist) {
-        formWishlist.addEventListener("submit", function(event) {
+    if (formWishlistEl) {
+        formWishlistEl.addEventListener("submit", function(event) {
             event.preventDefault();
-            const privacidadSeleccionada = formWishlist.querySelector('input[name="listaPrivacidad"]:checked');
+            const privacidadSeleccionada = formWishlistEl.querySelector('input[name="listaPrivacidad"]:checked');
             if (!privacidadSeleccionada) {
                 alert("Por favor, selecciona un tipo de privacidad para la wishlist (Pública o Privada).");
                 return; 
             }
-            const formData = new FormData(formWishlist);
+            const formData = new FormData(formWishlistEl);
             
             fetch('../../controllers/crearWishlist.php', {
                 method: 'POST',
@@ -385,8 +642,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     // Listener para el submit del form de edición de wishlist
-    if (formEditarWishlist) {
-        formEditarWishlist.addEventListener('submit', function(event) {
+    if (formEditarWishlistEl) {
+        formEditarWishlistEl.addEventListener('submit', function(event) {
             event.preventDefault();
             const idListaActual = popupEditarLista.dataset.idlistaactual;
             if (!idListaActual) {
@@ -394,13 +651,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const privacidadSeleccionada = formEditarWishlist.querySelector('input[name="editarListaPrivacidad"]:checked');
+            const privacidadSeleccionada = formEditarWishlistEl.querySelector('input[name="editarListaPrivacidad"]:checked');
             if (!privacidadSeleccionada) {
                 alert("Por favor, selecciona un tipo de privacidad para la wishlist.");
                 return;
             }
 
-            const formData = new FormData(formEditarWishlist);
+            const formData = new FormData(formEditarWishlistEl);
             formData.append('idLista', idListaActual); 
 
             fetch('../../controllers/actualizarWishlist.php', {
@@ -435,4 +692,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     cargarYRenderizarWishlists();
+
+    // Llamada inicial para actualizar estado del botón de submit
+    // y validar campos que ya tienen valor al cargar la página
+    emailInput.trigger('blur');
+    usuarioInput.trigger('blur');
+    // No disparamos passwordInput.trigger('blur') al inicio porque es opcional si está vacío
+    nacimientoInput.trigger('blur');
+    updateSubmitButtonState(); // Estado inicial del botón
 });
+
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     // ... (selectores y código existente de la Iteración 2.2) ...
+//     const ulListas = document.querySelector(".wishlists .listas");
+//     const popupEditarLista = document.getElementById("popupEditarLista");
+//     const btnCerrarEditarLista = document.getElementById("btnCerrarEditarLista");
+//     const formEditarWishlist = document.getElementById("formEditarWishlist");
+//     // Contenedor para los productos dentro del popup de edición
+//     const ulProductosEditar = document.getElementById("listaProductosEditar"); 
+
+//     // --- Funciones de Carga y Renderizado (cargarYRenderizarWishlists, cargarProductosDeWishlist) ---
+//     // Estas funciones ya las tienes de la iteración anterior. Asegúrate que estén aquí.
+//     // ... (pegar aquí las funciones cargarYRenderizarWishlists y cargarProductosDeWishlist de la respuesta anterior)
+
+//     /**
+//      * Carga y renderiza las wishlists del usuario.
+//      */
+    
+// });

@@ -26,6 +26,11 @@
     outline: none;
 }
 
+.infoGeneral .formPerfil .label{
+    color: whitesmoke;
+}
+
+
 /* Imagen de perfil */
 .ImageLoaded {
     display: block;
